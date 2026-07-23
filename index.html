@@ -219,7 +219,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
     </div>
 
     <div style="flex:1.6 1 480px;min-width:0;display:grid;gap:22px">
-      <div style="background:#12141a;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:clamp(18px,3vw,26px);display:grid;gap:20px;opacity:{{ resOp }};transition:opacity .3s;pointer-events:{{ resPe }}">
+      <div style="min-width:0;background:#12141a;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:clamp(18px,3vw,26px);display:grid;gap:20px;opacity:{{ resOp }};transition:opacity .3s;pointer-events:{{ resPe }}">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
           <div style="background:#0e1015;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 16px;display:grid;gap:2px">
             <span style="font-family:'IBM Plex Mono',monospace;font-size:clamp(22px,2.6vw,30px);font-weight:600;color:#f6b04e">{{ stN }}</span>
@@ -283,7 +283,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
 
         <div style="background:#0e1015;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:4px 18px">
           <sc-for list="{{ alarmas }}" as="a" hint-placeholder-count="3">
-            <div style="display:flex;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+            <div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05)">
               <span style="width:8px;height:8px;border-radius:50%;background:#f6b04e;box-shadow:0 0 10px rgba(246,176,78,.6);flex:none"></span>
               <span style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;min-width:62px">{{ a.hora }}</span>
               <span style="font-size:13.5px;color:#9aa1ad;flex:1;min-width:140px">{{ a.titulo }}</span>
@@ -573,7 +573,7 @@ en: {
 
 class Component extends DCLogic {
   state = {
-    lang:"es", plan:"max5", dias:["MO","TU","WE","TH","FR"], modo:"horario", intensidad:"normal",
+    lang:"es", plan:"max5", dias:["MO","TU","WE","TH","FR"], modo:"horario", intensidad:"tope",
     inicio:"09:00", fin:"14:00", bloque2on:false, inicio2:"16:00", fin2:"19:00",
     pausaOn:false, pausaIni:"13:00", pausaFin:"14:00", despertar:"07:00", dormir:"23:00",
     pctUsado:"", diaReset:"1", horaReset:"00:00",
