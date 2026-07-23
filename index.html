@@ -251,6 +251,7 @@
         <span class="hint" id="planHint"></span>
       </label>
       <label class="field"><span data-i18n="dias_l"></span>
+        <span class="hint" data-i18n="h_dias"></span>
         <div class="chips" id="dias">
           <button type="button" data-dia="MO" aria-pressed="true" data-i18n="d_mo"></button>
           <button type="button" data-dia="TU" aria-pressed="true" data-i18n="d_tu"></button>
@@ -274,9 +275,11 @@
     <div class="row" id="grupoHorario">
       <label class="field"><span data-i18n="inicio_l"></span>
         <input type="time" id="inicio" value="09:00">
+        <span class="hint" data-i18n="h_inicio"></span>
       </label>
       <label class="field"><span data-i18n="fin_l"></span>
         <input type="time" id="fin" value="14:00">
+        <span class="hint" data-i18n="h_fin"></span>
       </label>
     </div>
 
@@ -285,6 +288,7 @@
       <div class="row" id="grupoBloque2" hidden style="margin-top:12px">
         <label class="field"><span data-i18n="b2_ini"></span>
           <input type="time" id="inicio2" value="16:00">
+          <span class="hint" data-i18n="h_b2"></span>
         </label>
         <label class="field"><span data-i18n="fin_l"></span>
           <input type="time" id="fin2" value="19:00">
@@ -295,9 +299,11 @@
     <div class="row" id="grupoLoop" hidden>
       <label class="field"><span data-i18n="despertar_l"></span>
         <input type="time" id="despertar" value="07:00">
+        <span class="hint" data-i18n="h_despertar"></span>
       </label>
       <label class="field"><span data-i18n="dormir_l"></span>
         <input type="time" id="dormir" value="23:00">
+        <span class="hint" data-i18n="h_dormir"></span>
       </label>
     </div>
 
@@ -306,6 +312,7 @@
       <div class="row" id="grupoPausa" hidden style="margin-top:12px">
         <label class="field"><span data-i18n="pausa_ini"></span>
           <input type="time" id="pausaIni" value="13:00">
+          <span class="hint" data-i18n="h_pausa"></span>
         </label>
         <label class="field"><span data-i18n="pausa_fin"></span>
           <input type="time" id="pausaFin" value="14:00">
@@ -393,6 +400,7 @@
     <div class="row">
       <label class="field"><span data-i18n="pct_l"></span>
         <input type="number" id="pctUsado" min="0" max="100" placeholder="45">
+        <span class="hint" data-i18n="h_pct"></span>
       </label>
       <label class="field"><span data-i18n="reset_l"></span>
         <div class="row" style="gap:8px">
@@ -407,6 +415,7 @@
           </select>
           <input type="time" id="horaReset" value="00:00">
         </div>
+        <span class="hint" data-i18n="h_reset"></span>
       </label>
     </div>
     <div class="ritmo" id="ritmoOut" hidden>
@@ -527,6 +536,15 @@ es: {
   info_s2: 'Cómo leerlo: cada <b>barra azul</b> es una ventana de 5 h de capacidad; el <b>triángulo naranja</b> es la alarma para abrirla (mandas un mensaje corto a Claude y ya) y la <b>línea naranja</b> es tu bloque de trabajo. Las tarjetas de arriba resumen el resultado. Llévate las alarmas a tu calendario para no depender de esta página.',
   info_s3: 'Tu compañero del día a día: cuando le mandes el primer mensaje a Claude, márcalo aquí. Verás la cuenta regresiva hasta la recarga, te aviso si la ventana se muere sin usar, y cada apertura arma tu historial real de la semana.',
   info_s4: 'Tu plan tiene dos límites: el de cada ventana de 5 h y uno semanal. Si el semanal se agota, no hay más hasta el reinicio — por eso conviene dosificar. Compara tu % usado contra lo esperado: si vas lento, acelera tranquilo; si vas rápido, guarda para los días que faltan.',
+  h_dias: "Toca para activar o quitar los días en que sonarán tus alarmas.",
+  h_inicio: "La hora en que arrancas tu trabajo fuerte con Claude.",
+  h_fin: "La hora en que sueles cerrar ese bloque.",
+  h_b2: "Otro horario fuerte en el mismo día (ej. la tarde).",
+  h_despertar: "Antes de esta hora no sonará ninguna alarma.",
+  h_dormir: "Después de esta hora, tampoco.",
+  h_pausa: "Tu almuerzo o descanso: las alarmas se saltan esta franja.",
+  h_pct: "Solo el número: escribe /status en Claude y copia el porcentaje semanal.",
+  h_reset: "También sale en /status: cuándo tu límite semanal vuelve a cero.",
 },
 en: {
   claim: "Stop giving away tokens you already paid for.",
@@ -611,6 +629,15 @@ en: {
   info_s2: 'How to read it: each <b>blue bar</b> is a 5-hour window of capacity; the <b>orange triangle</b> is the alarm to open it (one short message to Claude and done) and the <b>orange line</b> is your work block. The cards above sum up the result. Take the alarms to your calendar so you don\'t depend on this page.',
   info_s3: 'Your day-to-day companion: when you send Claude your first message, mark it here. You\'ll see the countdown to the recharge, I\'ll warn you if the window is dying unused, and every opening builds your real weekly history.',
   info_s4: 'Your plan has two limits: the 5-hour window and a weekly one. If the weekly runs out, there\'s nothing left until the reset — so pace yourself. Compare your % used against what\'s expected: behind pace, speed up freely; ahead of pace, save some for the days left.',
+  h_dias: "Tap to toggle the days your alarms will ring.",
+  h_inicio: "The time your deep work with Claude starts.",
+  h_fin: "The time you usually wrap up that block.",
+  h_b2: "Another intense stretch in the same day (e.g. the afternoon).",
+  h_despertar: "No alarm will ring before this time.",
+  h_dormir: "None after this time either.",
+  h_pausa: "Your lunch or rest: alarms skip this stretch.",
+  h_pct: "Just the number: type /status in Claude and copy the weekly percentage.",
+  h_reset: "Also in /status: when your weekly limit goes back to zero.",
 },
 };
 
