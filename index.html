@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ventana5 — Exprime tu suscripción de Claude</title>
+<meta name="description" content="Deja de regalar tokens que ya pagaste: Ventana5 alinea las ventanas de 5 horas de Claude con tu horario real.">
+<meta name="theme-color" content="#2a78d6">
+<meta property="og:title" content="Ventana5 — Deja de regalar tokens que ya pagaste">
+<meta property="og:description" content="Tu suscripción de Claude se recarga cada 5 horas. Ventana5 te dice a qué hora abrir cada ventana para aprovechar cada token.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://adriansao95.github.io/ia-dev/">
+<meta property="og:image" content="https://adriansao95.github.io/ia-dev/og.png">
+<!-- TODO: generar og.png (usa el botón de exportar PNG) y subirlo al repo -->
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Ventana5","short_name":"Ventana5","start_url":".","display":"standalone","background_color":"%230d0d0d","theme_color":"%232a78d6"}'>
+<style>
+  :root {
+    color-scheme: light;
+    --surface: #fcfcfb;
+    --page: #f4f4f1;
+    --ink: #0b0b0b;
+    --ink-2: #52514e;
+    --muted: #898781;
+    --grid: #e1e0d9;
+    --border: rgba(11,11,11,0.10);
+    --win-a: #9ec5f4;
+    --win-b: #3987e5;
+    --accent: #2a78d6;
+    --accent-soft: rgba(42,120,214,0.10);
+    --work: #eb6834;
+    --work-soft: rgba(235,104,52,0.12);
+    --warn: #d03b3b;
+    --shadow: 0 1px 2px rgba(11,11,11,0.04), 0 8px 24px rgba(11,11,11,0.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --surface: #1a1a19;
+      --page: #0d0d0d;
+      --ink: #ffffff;
+      --ink-2: #c3c2b7;
+      --muted: #898781;
+      --grid: #2c2c2a;
+      --border: rgba(255,255,255,0.10);
+      --win-a: #1c5cab;
+      --win-b: #5598e7;
+      --accent: #3987e5;
+      --accent-soft: rgba(57,135,229,0.16);
+      --work: #d95926;
+      --work-soft: rgba(217,89,38,0.18);
+      --warn: #e66767;
+      --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page); color: var(--ink);
+    line-height: 1.55; padding: 40px 16px 56px;
+  }
+  main { max-width: 740px; margin: 0 auto; display: grid; gap: 24px; }
+
+  header { text-align: center; display: grid; gap: 8px; justify-items: center; position: relative; }
+  .logo { font-size: 2.1rem; font-weight: 800; letter-spacing: -0.02em; }
+  .logo span { color: var(--accent); }
+  header .claim { font-size: 1.05rem; font-weight: 650; }
+  header p { color: var(--ink-2); max-width: 56ch; }
+  #idioma {
+    position: absolute; top: 0; right: 0;
+    font: inherit; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+    padding: 5px 12px; border-radius: 999px;
+    border: 1px solid var(--grid); background: var(--surface); color: var(--ink-2);
+  }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; display: grid; gap: 18px;
+    box-shadow: var(--shadow);
+  }
+  .card > h2 { font-size: 1rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .paso {
+    width: 26px; height: 26px; border-radius: 50%; flex: none;
+    background: var(--accent); color: #fff; font-size: 0.85rem;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+
+  .field { display: grid; gap: 6px; font-weight: 600; font-size: 0.88rem; }
+  .field .hint { font-weight: 400; color: var(--muted); font-size: 0.8rem; }
+  select, input[type="time"], input[type="number"] {
+    font: inherit; font-weight: 500; padding: 9px 12px; border-radius: 10px;
+    border: 1px solid var(--grid); background: var(--page); color: var(--ink);
+    width: 100%;
+  }
+  select:focus-visible, input:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .row[hidden] { display: none; }
+  @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: var(--page); border: 1px solid var(--grid); border-radius: 12px; padding: 4px; }
+  .seg.tres { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 540px) { .seg.tres { grid-template-columns: 1fr; } }
+  .seg button {
+    font: inherit; font-weight: 600; font-size: 0.88rem; cursor: pointer;
+    border: none; border-radius: 9px; padding: 9px 8px;
+    background: transparent; color: var(--ink-2); display: grid; gap: 1px;
+  }
+  .seg button small { font-weight: 400; font-size: 0.75rem; color: var(--muted); }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .seg button[aria-pressed="true"] small { color: rgba(255,255,255,0.8); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips button {
+    font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    padding: 7px 14px; border-radius: 999px;
+    border: 1px solid var(--grid); background: var(--page); color: var(--ink-2);
+  }
+  .chips button[aria-pressed="true"] {
+    background: var(--accent-soft); border-color: var(--accent); color: var(--accent);
+  }
+  .chips.presets button { border-style: dashed; }
+
+  .error { color: var(--warn); font-size: 0.85rem; font-weight: 600; display: none; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .stat {
+    background: var(--page); border: 1px solid var(--grid); border-radius: 12px;
+    padding: 14px 16px; display: grid; gap: 2px;
+  }
+  .stat b { font-size: 1.5rem; font-weight: 750; letter-spacing: -0.01em; }
+  .stat span { font-size: 0.78rem; color: var(--ink-2); }
+
+  .alarma {
+    display: flex; gap: 14px; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--grid);
+  }
+  .alarma:last-child { border-bottom: none; }
+  .alarma .icono {
+    width: 34px; height: 34px; border-radius: 10px; flex: none;
+    background: var(--work-soft); color: var(--work);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 1rem;
+  }
+  .alarma .hora { font-weight: 750; font-size: 1.15rem; min-width: 66px; font-variant-numeric: tabular-nums; }
+  .alarma .que { color: var(--ink-2); font-size: 0.9rem; flex: 1; }
+  .alarma a.gcal {
+    font-size: 0.78rem; font-weight: 650; color: var(--accent);
+    text-decoration: none; white-space: nowrap;
+  }
+
+  #timeline { width: 100%; }
+  .leyenda { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.8rem; color: var(--ink-2); }
+  .leyenda span { display: inline-flex; align-items: center; gap: 6px; }
+  .chip { width: 14px; height: 10px; border-radius: 3px; display: inline-block; }
+
+  .acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn {
+    font: inherit; font-weight: 650; cursor: pointer;
+    padding: 11px 18px; border-radius: 10px; border: none;
+    background: var(--accent); color: #fff;
+  }
+  .btn.sec { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  .btn.ghost {
+    background: transparent; color: var(--ink-2); border: 1px dashed var(--grid);
+    font-weight: 600; font-size: 0.85rem; padding: 8px 14px;
+  }
+  .btn:active { transform: translateY(1px); }
+
+  .cuenta { text-align: center; display: grid; gap: 10px; justify-items: center; }
+  .cuenta .tiempo { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .barra { width: 100%; height: 10px; border-radius: 999px; background: var(--grid); overflow: hidden; }
+  .barra > div { height: 100%; border-radius: 999px; background: var(--accent); transition: width 1s linear; }
+  .barra.alerta > div { background: var(--work); }
+  .barra.semana > div { background: var(--work); }
+
+  .nota { font-size: 0.85rem; color: var(--muted); }
+  details { border: 1px solid var(--grid); border-radius: 12px; padding: 12px 16px; }
+  details summary { cursor: pointer; font-weight: 650; font-size: 0.9rem; color: var(--ink-2); }
+  details[open] summary { margin-bottom: 8px; }
+  details p { font-size: 0.88rem; color: var(--ink-2); margin-bottom: 6px; }
+
+  .ritmo { display: grid; gap: 8px; }
+  .ritmo .fila { display: grid; grid-template-columns: 84px 1fr 48px; gap: 10px; align-items: center; font-size: 0.82rem; color: var(--ink-2); }
+  .ritmo .fila b { font-variant-numeric: tabular-nums; }
+  #ritmoMsg { font-size: 0.9rem; font-weight: 600; }
+
+  /* wizard */
+  #wizardFondo {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 10;
+  }
+  #wizardFondo[hidden] { display: none; }
+  #wizardCaja { max-width: 440px; width: 100%; }
+  #wizardCaja .opciones { display: grid; gap: 8px; }
+  #wizardCaja .opciones button {
+    font: inherit; font-weight: 600; cursor: pointer; text-align: left;
+    padding: 12px 16px; border-radius: 10px;
+    border: 1px solid var(--grid); background: var(--page); color: var(--ink);
+  }
+  #wizardCaja .opciones button:hover { border-color: var(--accent); }
+
+  footer { text-align: center; color: var(--muted); font-size: 0.85rem; }
+  footer a { color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <button id="idioma" type="button">EN</button>
+    <div class="logo">⏳ Ventana<span>5</span></div>
+    <p class="claim" data-i18n="claim"></p>
+    <p data-i18n="sub"></p>
+  </header>
+
+  <section class="card">
+    <h2><span class="paso">1</span> <span data-i18n="s1"></span></h2>
+
+    <div class="field"><span data-i18n="presets_l"></span>
+      <div class="chips presets" id="presets">
+        <button type="button" data-preset="oficina">🏢 <span data-i18n="p_oficina"></span></button>
+        <button type="button" data-preset="freelancer">💻 <span data-i18n="p_free"></span></button>
+        <button type="button" data-preset="nocturno">🌙 <span data-i18n="p_noct"></span></button>
+        <button type="button" data-preset="finde">📅 <span data-i18n="p_finde"></span></button>
+        <button type="button" id="wizardAbrir">✨ <span data-i18n="wiz_btn"></span></button>
+      </div>
+    </div>
+
+    <div class="row">
+      <label class="field"><span data-i18n="plan_l"></span>
+        <select id="plan">
+          <option value="pro">Claude Pro</option>
+          <option value="max5" selected>Claude Max 5x</option>
+          <option value="max20">Claude Max 20x</option>
+        </select>
+        <span class="hint" id="planHint"></span>
+      </label>
+      <label class="field"><span data-i18n="dias_l"></span>
+        <div class="chips" id="dias">
+          <button type="button" data-dia="MO" aria-pressed="true" data-i18n="d_mo"></button>
+          <button type="button" data-dia="TU" aria-pressed="true" data-i18n="d_tu"></button>
+          <button type="button" data-dia="WE" aria-pressed="true" data-i18n="d_we"></button>
+          <button type="button" data-dia="TH" aria-pressed="true" data-i18n="d_th"></button>
+          <button type="button" data-dia="FR" aria-pressed="true" data-i18n="d_fr"></button>
+          <button type="button" data-dia="SA" aria-pressed="false" data-i18n="d_sa"></button>
+          <button type="button" data-dia="SU" aria-pressed="false" data-i18n="d_su"></button>
+        </div>
+      </label>
+    </div>
+
+    <div class="field"><span data-i18n="modo_l"></span>
+      <div class="seg tres" id="modo">
+        <button type="button" data-modo="horario" aria-pressed="true"><span data-i18n="m_h"></span><small data-i18n="m_h_s"></small></button>
+        <button type="button" data-modo="hibrido" aria-pressed="false"><span data-i18n="m_y"></span><small data-i18n="m_y_s"></small></button>
+        <button type="button" data-modo="loop" aria-pressed="false"><span data-i18n="m_l"></span><small data-i18n="m_l_s"></small></button>
+      </div>
+    </div>
+
+    <div class="row" id="grupoHorario">
+      <label class="field"><span data-i18n="inicio_l"></span>
+        <input type="time" id="inicio" value="09:00">
+      </label>
+      <label class="field"><span data-i18n="fin_l"></span>
+        <input type="time" id="fin" value="14:00">
+      </label>
+    </div>
+
+    <div id="zonaBloque2">
+      <button type="button" class="btn ghost" id="toggleBloque2"></button>
+      <div class="row" id="grupoBloque2" hidden style="margin-top:12px">
+        <label class="field"><span data-i18n="b2_ini"></span>
+          <input type="time" id="inicio2" value="16:00">
+        </label>
+        <label class="field"><span data-i18n="fin_l"></span>
+          <input type="time" id="fin2" value="19:00">
+        </label>
+      </div>
+    </div>
+
+    <div class="row" id="grupoLoop" hidden>
+      <label class="field"><span data-i18n="despertar_l"></span>
+        <input type="time" id="despertar" value="07:00">
+      </label>
+      <label class="field"><span data-i18n="dormir_l"></span>
+        <input type="time" id="dormir" value="23:00">
+      </label>
+    </div>
+
+    <div id="zonaPausa">
+      <button type="button" class="btn ghost" id="togglePausa"></button>
+      <div class="row" id="grupoPausa" hidden style="margin-top:12px">
+        <label class="field"><span data-i18n="pausa_ini"></span>
+          <input type="time" id="pausaIni" value="13:00">
+        </label>
+        <label class="field"><span data-i18n="pausa_fin"></span>
+          <input type="time" id="pausaFin" value="14:00">
+        </label>
+      </div>
+    </div>
+
+    <div class="field" id="grupoIntensidad"><span data-i18n="int_l"></span>
+      <div class="seg" id="intensidad">
+        <button type="button" data-int="normal" aria-pressed="true"><span data-i18n="i_n"></span><small data-i18n="i_n_s"></small></button>
+        <button type="button" data-int="tope" aria-pressed="false"><span data-i18n="i_t"></span><small data-i18n="i_t_s"></small></button>
+      </div>
+    </div>
+
+    <p class="error" id="error"></p>
+  </section>
+
+  <section class="card" id="resultado" hidden>
+    <h2><span class="paso">2</span> <span data-i18n="s2"></span></h2>
+
+    <div class="stats">
+      <div class="stat"><b id="statVentanas">—</b><span id="statVentanasLabel"></span></div>
+      <div class="stat"><b id="statPrimera">—</b><span data-i18n="stat_primera"></span></div>
+      <div class="stat"><b id="statCapacidad">—</b><span id="statCapacidadLabel"></span></div>
+      <div class="stat" id="statRescView"><b id="statResc">—</b><span data-i18n="stat_resc"></span></div>
+    </div>
+
+    <p class="nota" id="explicacion"></p>
+
+    <div id="listaAlarmas"></div>
+
+    <div id="timeline"></div>
+    <div class="leyenda">
+      <span><span class="chip" id="legChipWin"></span> <span data-i18n="leg_v"></span></span>
+      <span id="leyendaBloque"><span class="chip" id="legChipWork"></span> <span data-i18n="leg_b"></span></span>
+      <span id="leyendaPausa" style="display:none">☕ <span data-i18n="leg_p"></span></span>
+      <span><span id="legTri">▲</span> <span data-i18n="leg_a"></span></span>
+    </div>
+
+    <div class="acciones">
+      <button class="btn" id="descargar"></button>
+      <button class="btn sec" id="copiar"></button>
+      <button class="btn sec" id="compartir"></button>
+      <button class="btn sec" id="exportar"></button>
+    </div>
+
+    <details>
+      <summary data-i18n="why_t"></summary>
+      <p data-i18n="why_1"></p>
+      <p data-i18n="why_2"></p>
+      <p data-i18n="why_3"></p>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2><span class="paso">3</span> <span data-i18n="s3"></span></h2>
+    <div class="cuenta" id="vivoOff">
+      <p class="nota" data-i18n="vivo_off"></p>
+      <button class="btn" id="abrirVentana"></button>
+    </div>
+    <div class="cuenta" id="vivoOn" hidden>
+      <div class="tiempo" id="vivoTiempo">—</div>
+      <div class="barra" id="vivoBarraCont"><div id="vivoBarra" style="width:0%"></div></div>
+      <p class="nota" id="vivoDetalle"></p>
+      <div class="acciones">
+        <button class="btn" id="vivoReiniciar" hidden></button>
+        <button class="btn ghost" id="vivoDescartar"></button>
+      </div>
+    </div>
+    <div id="histZona" hidden>
+      <details>
+        <summary data-i18n="hist_t"></summary>
+        <p class="nota" data-i18n="hist_hint"></p>
+        <div id="histMapa"></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="paso">4</span> <span data-i18n="s4"></span></h2>
+    <p class="nota" data-i18n-html="s4_hint"></p>
+    <div class="row">
+      <label class="field"><span data-i18n="pct_l"></span>
+        <input type="number" id="pctUsado" min="0" max="100" placeholder="45">
+      </label>
+      <label class="field"><span data-i18n="reset_l"></span>
+        <div class="row" style="gap:8px">
+          <select id="diaReset">
+            <option value="1" data-i18n="dd_mo"></option>
+            <option value="2" data-i18n="dd_tu"></option>
+            <option value="3" data-i18n="dd_we"></option>
+            <option value="4" data-i18n="dd_th"></option>
+            <option value="5" data-i18n="dd_fr"></option>
+            <option value="6" data-i18n="dd_sa"></option>
+            <option value="0" data-i18n="dd_su"></option>
+          </select>
+          <input type="time" id="horaReset" value="00:00">
+        </div>
+      </label>
+    </div>
+    <div class="ritmo" id="ritmoOut" hidden>
+      <div class="fila"><span data-i18n="usado_l"></span><div class="barra semana"><div id="barraUsado"></div></div><b id="pctUsadoTxt"></b></div>
+      <div class="fila"><span data-i18n="esperado_l"></span><div class="barra"><div id="barraEsperado"></div></div><b id="pctEsperadoTxt"></b></div>
+      <p id="ritmoMsg"></p>
+    </div>
+  </section>
+
+  <footer>
+    <span data-i18n="footer"></span> <a href="https://www.linkedin.com/in/carlos-adrian-rodr%C3%ADguez-alarc%C3%B3n-adriansao95/" target="_blank" rel="noopener" id="linkedin" data-i18n="footer_cta"></a>
+  </footer>
+</main>
+
+<div id="wizardFondo" hidden>
+  <div class="card" id="wizardCaja">
+    <h2 id="wizardTitulo"></h2>
+    <div class="opciones" id="wizardOpciones"></div>
+    <button class="btn ghost" id="wizardCerrar"></button>
+  </div>
+</div>
+
+<script>
+const WIN = 300; // minutos por ventana
+const DUR_MS = WIN * 60 * 1000;
+
+const $ = id => document.getElementById(id);
+const aMin = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+const aHora = m => {
+  m = Math.max(0, Math.round(m / 5) * 5);
+  return String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+};
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ================= i18n ================= */
+
+const STR = {
+es: {
+  claim: "Deja de regalar tokens que ya pagaste.",
+  sub: "Tu suscripción de Claude se recarga cada 5 horas, y el reloj arranca con tu primer mensaje. Ventana5 te dice a qué hora abrir cada ventana para que las recargas caigan justo cuando más las necesitas.",
+  s1: "¿Cómo usas Claude?", s2: "Tu cronograma", s3: "Tu ventana en vivo", s4: "Tu ritmo semanal",
+  presets_l: "Empieza con un clic",
+  p_oficina: "Oficina 9–6", p_free: "Freelancer", p_noct: "Nocturno", p_finde: "Fin de semana",
+  wiz_btn: "Configúrame en 3 preguntas",
+  plan_l: "Tu plan", dias_l: "Días con alarmas", modo_l: "Tu ritmo",
+  plan_pro: "La base: cada ventana de 5 h trae la capacidad estándar.",
+  plan_max5: "5× la capacidad de Pro en cada ventana de 5 h.",
+  plan_max20: "20× la capacidad de Pro en cada ventana de 5 h.",
+  d_mo: "Lun", d_tu: "Mar", d_we: "Mié", d_th: "Jue", d_fr: "Vie", d_sa: "Sáb", d_su: "Dom",
+  dd_mo: "Lunes", dd_tu: "Martes", dd_we: "Miércoles", dd_th: "Jueves", dd_fr: "Viernes", dd_sa: "Sábado", dd_su: "Domingo",
+  m_h: "Horario específico", m_h_s: "trabajo a tope en un bloque",
+  m_y: "Híbrido", m_y_s: "bloque pico + resto del día",
+  m_l: "Loop continuo", m_l_s: "uso Claude todo el día",
+  inicio_l: "Empiezo a trabajar a tope", fin_l: "Termino", b2_ini: "Segundo bloque: empiezo",
+  b2_add: "➕ Agregar un segundo bloque", b2_rm: "➖ Quitar el segundo bloque",
+  despertar_l: "Me despierto", dormir_l: "Me duermo",
+  pausa_add: "☕ Agregar una pausa sin alarmas", pausa_rm: "➖ Quitar la pausa",
+  pausa_ini: "Pausa: desde", pausa_fin: "Hasta",
+  int_l: "Intensidad en tu bloque",
+  i_n: "Cubrir mi bloque", i_n_s: "mínimas alarmas",
+  i_t: "Máxima capacidad", i_t_s: "una recarga extra dentro del bloque",
+  stat_v1: "ventana completa", stat_vn: "ventanas completas",
+  stat_primera: "primera alarma del día",
+  stat_cap_b: "capacidad en tu bloque", stat_cap_bs: "capacidad en tus bloques", stat_cob: "de cobertura continua",
+  stat_resc: "de capacidad rescatada por semana",
+  expl_1: "Una sola apertura antes de empezar te deja la ventana fresca durante todo el bloque. Activa «Máxima capacidad» para meter una recarga extra.",
+  expl_n: (n, pl) => `Las recargas caen dentro de tu${pl ? "s" : ""} bloque${pl ? "s" : ""}: trabajas con ${n} ventanas completas en vez de una.`,
+  expl_loop: n => `Encadenando ${n} ventanas seguidas cubres todo tu día despierto sin desperdiciar capacidad.`,
+  expl_b2: " El segundo bloque abre su ventana apenas termina la cadena del primero.",
+  expl_hib: " La cadena está anclada a tu bloque pico y cubre el resto del día.",
+  t_abre: "Abre tu ventana: un mensaje corto a Claude y listo",
+  t_recarga: "Capacidad completa otra vez: hora de las tareas pesadas",
+  t_cadena: "Mantén viva la cadena: un mensaje corto la abre",
+  t_primera: "Abre tu primera ventana del día",
+  leg_v: "Ventana de 5 h", leg_b: "Tu bloque de trabajo", leg_p: "Tu pausa", leg_a: "Alarma: abre ventana",
+  btn_ics: "📅 Llévate las alarmas a tu calendario",
+  btn_msg: "📋 Copia el mensaje disparador", btn_msg_ok: "✅ Copiado, pégalo en Claude",
+  btn_share: "🔗 Comparte tu setup", btn_share_ok: "✅ Link copiado",
+  btn_png: "🖼️ Descarga tu cronograma en imagen",
+  gcal: "+ Google Calendar",
+  disparador: "Hola, abro mi ventana de trabajo. Dame un dato útil de una línea sobre productividad.",
+  why_t: "¿Por qué funciona esto?",
+  why_1: "Es como poner a cargar el teléfono antes de salir: cuando lo necesitas, está lleno. Tu ventana de 5 horas empieza con tu primer mensaje, no a horas fijas. Si la abres un rato antes de tu bloque, la recarga cae dentro del bloque y trabajas con dos ventanas frescas en vez de una.",
+  why_2: "La alarma no manda el mensaje por ti: cuando suene, un mensaje corto a Claude y listo (usa el botón de copiar). Abrir una ventana casi no gasta: solo cuenta lo que uses dentro de ella.",
+  why_3: "Consejo: guarda lo pesado — código grande, análisis largos — para justo después de cada recarga, cuando la capacidad está completa.",
+  vivo_off: "¿Acabas de mandarle el primer mensaje a Claude? Márcalo aquí y te aviso cuando tu capacidad esté completa otra vez.",
+  vivo_btn: "🚀 Acabo de abrir una ventana", vivo_next: "🚀 Abrí la siguiente", vivo_discard: "Descartar",
+  vivo_run: fin => `Tu capacidad se recarga a las ${fin}. Lo pesado va primero: la ventana joven rinde más.`,
+  vivo_dying: fin => `⚠️ Quedan menos de 30 minutos: aprovecha lo que queda antes de la recarga de las ${fin}.`,
+  vivo_full_t: "✅ Recargada",
+  vivo_full: "Capacidad completa otra vez. Abre la siguiente ventana con un mensaje corto y sigue.",
+  notif_full: "Capacidad completa otra vez: abre tu siguiente ventana.",
+  notif_dying: "Quedan 30 min de tu ventana: aprovecha lo que queda.",
+  hist_t: "Tu historial de ventanas", hist_hint: "Cada cuadro es una hora de la semana; más intenso = más ventanas abiertas a esa hora.",
+  s4_hint: 'Además de las ventanas de 5 h, tu plan tiene un límite semanal. Escribe cuánto llevas usado (lo ves con <code>/status</code> en Claude) y te digo si puedes acelerar.',
+  pct_l: "Límite semanal usado (%)", reset_l: "Cuándo se reinicia (día y hora)",
+  usado_l: "Usado", esperado_l: "Esperado",
+  ritmo_fast: (p, e) => `🔻 Vas rápido: usaste ${p}% y va el ${e}% de la semana. Guarda capacidad para lo que falta.`,
+  ritmo_slow: (p, e) => `🟢 Te sobra capacidad: llevas ${p}% con el ${e}% de la semana andado. Acelera sin miedo.`,
+  ritmo_ok: "✅ Ritmo perfecto: tu consumo va a la par de la semana.",
+  err_bloque: "Revisa las horas: el bloque debe terminar después de empezar.",
+  err_b2: "Revisa el segundo bloque: debe terminar después de empezar.",
+  err_b2_orden: "El segundo bloque debe empezar después de que termine el primero.",
+  err_sueno: "Revisa tus horas de sueño: dormir va después de despertar.",
+  err_pausa: "Revisa la pausa: debe terminar después de empezar.",
+  err_fuera: "Tu bloque queda fuera de tus horas despierto: revisa las horas.",
+  err_dias: "Elige al menos un día para tus alarmas.",
+  wiz_q1: "¿Cuándo usas Claude?",
+  wiz_q1a: "🎯 En un horario fijo, a tope", wiz_q1b: "🌗 Tengo horas pico y uso suelto", wiz_q1c: "🔁 Todo el día, sin horario",
+  wiz_q2: "¿Cuál es tu plan?",
+  wiz_q3: "¿Qué días?",
+  wiz_q3a: "Entre semana", wiz_q3b: "Todos los días", wiz_q3c: "Solo fines de semana",
+  wiz_close: "Cerrar",
+  png_title: "Mi cronograma Ventana5",
+  png_brand: "⏳ Ventana5 · hecho por Adrián Rodríguez",
+  footer: "Hecho por Adrián Rodríguez ·", footer_cta: "Sígueme en LinkedIn",
+},
+en: {
+  claim: "Stop giving away tokens you already paid for.",
+  sub: "Your Claude subscription recharges every 5 hours, and the clock starts with your first message. Ventana5 tells you when to open each window so the recharges land exactly when you need them most.",
+  s1: "How do you use Claude?", s2: "Your schedule", s3: "Your live window", s4: "Your weekly pace",
+  presets_l: "Start with one click",
+  p_oficina: "Office 9–6", p_free: "Freelancer", p_noct: "Night owl", p_finde: "Weekend",
+  wiz_btn: "Set me up in 3 questions",
+  plan_l: "Your plan", dias_l: "Alarm days", modo_l: "Your rhythm",
+  plan_pro: "The base: every 5-hour window carries the standard capacity.",
+  plan_max5: "5× Pro's capacity in every 5-hour window.",
+  plan_max20: "20× Pro's capacity in every 5-hour window.",
+  d_mo: "Mon", d_tu: "Tue", d_we: "Wed", d_th: "Thu", d_fr: "Fri", d_sa: "Sat", d_su: "Sun",
+  dd_mo: "Monday", dd_tu: "Tuesday", dd_we: "Wednesday", dd_th: "Thursday", dd_fr: "Friday", dd_sa: "Saturday", dd_su: "Sunday",
+  m_h: "Fixed schedule", m_h_s: "deep work in one block",
+  m_y: "Hybrid", m_y_s: "peak block + rest of the day",
+  m_l: "Continuous loop", m_l_s: "I use Claude all day",
+  inicio_l: "Deep work starts at", fin_l: "Ends at", b2_ini: "Second block: starts at",
+  b2_add: "➕ Add a second block", b2_rm: "➖ Remove second block",
+  despertar_l: "I wake up", dormir_l: "I go to sleep",
+  pausa_add: "☕ Add an alarm-free break", pausa_rm: "➖ Remove break",
+  pausa_ini: "Break: from", pausa_fin: "Until",
+  int_l: "Intensity in your block",
+  i_n: "Cover my block", i_n_s: "fewest alarms",
+  i_t: "Max capacity", i_t_s: "an extra recharge inside the block",
+  stat_v1: "full window", stat_vn: "full windows",
+  stat_primera: "first alarm of the day",
+  stat_cap_b: "capacity in your block", stat_cap_bs: "capacity in your blocks", stat_cob: "of continuous coverage",
+  stat_resc: "of capacity rescued per week",
+  expl_1: "One opening before you start keeps the window fresh through your whole block. Turn on “Max capacity” to squeeze in an extra recharge.",
+  expl_n: (n, pl) => `The recharges land inside your block${pl ? "s" : ""}: you work with ${n} full windows instead of one.`,
+  expl_loop: n => `Chaining ${n} windows back to back covers your whole waking day with zero wasted capacity.`,
+  expl_b2: " The second block opens its window right after the first chain ends.",
+  expl_hib: " The chain is anchored to your peak block and covers the rest of the day.",
+  t_abre: "Open your window: one short message to Claude and you're set",
+  t_recarga: "Full capacity again: time for the heavy tasks",
+  t_cadena: "Keep the chain alive: one short message opens it",
+  t_primera: "Open your first window of the day",
+  leg_v: "5-hour window", leg_b: "Your work block", leg_p: "Your break", leg_a: "Alarm: open a window",
+  btn_ics: "📅 Take the alarms to your calendar",
+  btn_msg: "📋 Copy the trigger message", btn_msg_ok: "✅ Copied — paste it in Claude",
+  btn_share: "🔗 Share your setup", btn_share_ok: "✅ Link copied",
+  btn_png: "🖼️ Download your schedule as an image",
+  gcal: "+ Google Calendar",
+  disparador: "Hi! Opening my work window. Give me one useful one-line productivity fact.",
+  why_t: "Why does this work?",
+  why_1: "It's like charging your phone before leaving home: when you need it, it's full. Your 5-hour window starts with your first message, not at fixed times. Open it a while before your block and the recharge lands inside it — you work with two fresh windows instead of one.",
+  why_2: "The alarm can't send the message for you: when it rings, one short message to Claude and you're set (use the copy button). Opening a window costs almost nothing — only what you use inside it counts.",
+  why_3: "Tip: save the heavy stuff — big code, long analyses — for right after each recharge, when capacity is full.",
+  vivo_off: "Just sent Claude your first message? Mark it here and I'll tell you when your capacity is full again.",
+  vivo_btn: "🚀 I just opened a window", vivo_next: "🚀 Opened the next one", vivo_discard: "Dismiss",
+  vivo_run: fin => `Your capacity recharges at ${fin}. Heavy stuff goes first: a young window performs best.`,
+  vivo_dying: fin => `⚠️ Less than 30 minutes left: use what remains before the ${fin} recharge.`,
+  vivo_full_t: "✅ Recharged",
+  vivo_full: "Full capacity again. Open the next window with a short message and keep going.",
+  notif_full: "Full capacity again: open your next window.",
+  notif_dying: "30 minutes left in your window: use what remains.",
+  hist_t: "Your window history", hist_hint: "Each square is one hour of the week; darker = more windows opened at that hour.",
+  s4_hint: 'Besides the 5-hour windows, your plan has a weekly limit. Type how much you\'ve used (check <code>/status</code> in Claude) and I\'ll tell you if you can speed up.',
+  pct_l: "Weekly limit used (%)", reset_l: "When it resets (day and time)",
+  usado_l: "Used", esperado_l: "Expected",
+  ritmo_fast: (p, e) => `🔻 You're going fast: ${p}% used with ${e}% of the week gone. Save capacity for what's left.`,
+  ritmo_slow: (p, e) => `🟢 You have capacity to spare: ${p}% used with ${e}% of the week gone. Speed up without fear.`,
+  ritmo_ok: "✅ Perfect pace: your usage matches the week.",
+  err_bloque: "Check the times: the block must end after it starts.",
+  err_b2: "Check the second block: it must end after it starts.",
+  err_b2_orden: "The second block must start after the first one ends.",
+  err_sueno: "Check your sleep times: bedtime comes after waking up.",
+  err_pausa: "Check the break: it must end after it starts.",
+  err_fuera: "Your block falls outside your waking hours: check the times.",
+  err_dias: "Pick at least one day for your alarms.",
+  wiz_q1: "When do you use Claude?",
+  wiz_q1a: "🎯 On a fixed schedule, full focus", wiz_q1b: "🌗 Peak hours plus casual use", wiz_q1c: "🔁 All day, no set schedule",
+  wiz_q2: "What's your plan?",
+  wiz_q3: "Which days?",
+  wiz_q3a: "Weekdays", wiz_q3b: "Every day", wiz_q3c: "Weekends only",
+  wiz_close: "Close",
+  png_title: "My Ventana5 schedule",
+  png_brand: "⏳ Ventana5 · made by Adrián Rodríguez",
+  footer: "Made by Adrián Rodríguez ·", footer_cta: "Follow me on LinkedIn",
+},
+};
+
+let lang = localStorage.getItem("v5_lang") || "es";
+const t = k => STR[lang][k];
+
+function aplicarIdioma() {
+  document.documentElement.lang = lang;
+  $("idioma").textContent = lang === "es" ? "EN" : "ES";
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+  $("toggleBloque2").textContent = t(bloque2on ? "b2_rm" : "b2_add");
+  $("togglePausa").textContent = t(pausaOn ? "pausa_rm" : "pausa_add");
+  $("descargar").textContent = t("btn_ics");
+  $("copiar").textContent = t("btn_msg");
+  $("compartir").textContent = t("btn_share");
+  $("exportar").textContent = t("btn_png");
+  $("abrirVentana").textContent = t("vivo_btn");
+  $("vivoReiniciar").textContent = t("vivo_next");
+  $("vivoDescartar").textContent = t("vivo_discard");
+  $("wizardCerrar").textContent = t("wiz_close");
+  calcular(); ritmoSemanal(); tickVivo(); pintarHist();
+}
+
+$("idioma").addEventListener("click", () => {
+  lang = lang === "es" ? "en" : "es";
+  localStorage.setItem("v5_lang", lang);
+  aplicarIdioma();
+});
+
+/* ================= controles ================= */
+
+let modo = "horario", intensidad = "normal", bloque2on = false, pausaOn = false;
+let estado = null;
+
+function segmento(contId, attr, onPick) {
+  $(contId).querySelectorAll("button").forEach(b =>
+    b.addEventListener("click", () => {
+      $(contId).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+      onPick(b.dataset[attr]);
+    })
+  );
+}
+
+function marcarSeg(contId, attr, val) {
+  $(contId).querySelectorAll("button").forEach(b =>
+    b.setAttribute("aria-pressed", b.dataset[attr] === val));
+}
+
+function aplicarModo(v) {
+  modo = v;
+  $("grupoHorario").hidden = v === "loop";
+  $("grupoLoop").hidden = v === "horario";
+  $("zonaBloque2").style.display = v === "horario" ? "block" : "none";
+  $("grupoIntensidad").style.display = v === "loop" ? "none" : "grid";
+  calcular();
+}
+
+segmento("modo", "modo", aplicarModo);
+segmento("intensidad", "int", v => { intensidad = v; calcular(); });
+
+$("toggleBloque2").addEventListener("click", () => {
+  bloque2on = !bloque2on;
+  $("grupoBloque2").hidden = !bloque2on;
+  $("toggleBloque2").textContent = t(bloque2on ? "b2_rm" : "b2_add");
+  calcular();
+});
+
+$("togglePausa").addEventListener("click", () => {
+  pausaOn = !pausaOn;
+  $("grupoPausa").hidden = !pausaOn;
+  $("togglePausa").textContent = t(pausaOn ? "pausa_rm" : "pausa_add");
+  calcular();
+});
+
+$("dias").querySelectorAll("button").forEach(b =>
+  b.addEventListener("click", () => {
+    b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true");
+    pintar();
+  })
+);
+
+["plan", "inicio", "fin", "inicio2", "fin2", "despertar", "dormir", "pausaIni", "pausaFin"].forEach(id =>
+  $(id).addEventListener("change", calcular)
+);
+
+const diasElegidos = () => [...$("dias").querySelectorAll('[aria-pressed="true"]')].map(b => b.dataset.dia);
+
+function marcarDias(lista) {
+  $("dias").querySelectorAll("button").forEach(b =>
+    b.setAttribute("aria-pressed", lista.includes(b.dataset.dia)));
+}
+
+/* ---- presets ---- */
+
+const PRESETS = {
+  oficina:    { modo: "horario", int: "normal", inicio: "09:00", fin: "18:00", dias: ["MO","TU","WE","TH","FR"], pausa: ["13:00","14:00"] },
+  freelancer: { modo: "hibrido", int: "tope", inicio: "10:00", fin: "13:00", despertar: "08:00", dormir: "23:00", dias: ["MO","TU","WE","TH","FR"] },
+  nocturno:   { modo: "hibrido", int: "tope", inicio: "20:00", fin: "23:30", despertar: "10:00", dormir: "23:55", dias: ["MO","TU","WE","TH","FR","SA","SU"] },
+  finde:      { modo: "horario", int: "tope", inicio: "10:00", fin: "18:00", dias: ["SA","SU"] },
+};
+
+function aplicarPreset(nombre) {
+  const p = PRESETS[nombre];
+  if (p.inicio) $("inicio").value = p.inicio;
+  if (p.fin) $("fin").value = p.fin;
+  if (p.despertar) $("despertar").value = p.despertar;
+  if (p.dormir) $("dormir").value = p.dormir;
+  marcarDias(p.dias);
+  intensidad = p.int; marcarSeg("intensidad", "int", p.int);
+  bloque2on = false; $("grupoBloque2").hidden = true; $("toggleBloque2").textContent = t("b2_add");
+  pausaOn = !!p.pausa;
+  $("grupoPausa").hidden = !pausaOn;
+  $("togglePausa").textContent = t(pausaOn ? "pausa_rm" : "pausa_add");
+  if (p.pausa) { $("pausaIni").value = p.pausa[0]; $("pausaFin").value = p.pausa[1]; }
+  marcarSeg("modo", "modo", p.modo);
+  aplicarModo(p.modo);
+}
+
+$("presets").querySelectorAll("[data-preset]").forEach(b =>
+  b.addEventListener("click", () => aplicarPreset(b.dataset.preset))
+);
+
+/* ---- wizard ---- */
+
+const wiz = { paso: 0, resp: {} };
+
+function wizardPinta() {
+  const pasos = [
+    { q: "wiz_q1", ops: [["wiz_q1a", "horario"], ["wiz_q1b", "hibrido"], ["wiz_q1c", "loop"]], key: "modo" },
+    { q: "wiz_q2", ops: [["Claude Pro", "pro"], ["Claude Max 5x", "max5"], ["Claude Max 20x", "max20"]], key: "plan", lit: true },
+    { q: "wiz_q3", ops: [["wiz_q3a", "semana"], ["wiz_q3b", "todos"], ["wiz_q3c", "finde"]], key: "dias" },
+  ];
+  const p = pasos[wiz.paso];
+  $("wizardTitulo").textContent = `${wiz.paso + 1}/3 · ${t(p.q)}`;
+  $("wizardOpciones").innerHTML = "";
+  p.ops.forEach(([label, val]) => {
+    const b = document.createElement("button");
+    b.textContent = p.lit ? label : t(label);
+    b.addEventListener("click", () => {
+      wiz.resp[p.key] = val;
+      if (wiz.paso < 2) { wiz.paso++; wizardPinta(); }
+      else wizardAplicar();
+    });
+    $("wizardOpciones").appendChild(b);
+  });
+}
+
+function wizardAplicar() {
+  $("wizardFondo").hidden = true;
+  $("plan").value = wiz.resp.plan;
+  marcarDias(wiz.resp.dias === "todos" ? ["MO","TU","WE","TH","FR","SA","SU"]
+    : wiz.resp.dias === "finde" ? ["SA","SU"] : ["MO","TU","WE","TH","FR"]);
+  marcarSeg("modo", "modo", wiz.resp.modo);
+  aplicarModo(wiz.resp.modo);
+  $("resultado").scrollIntoView({ behavior: "smooth" });
+}
+
+$("wizardAbrir").addEventListener("click", () => { wiz.paso = 0; wiz.resp = {}; wizardPinta(); $("wizardFondo").hidden = false; });
+$("wizardCerrar").addEventListener("click", () => { $("wizardFondo").hidden = true; });
+
+/* ================= cálculo ================= */
+
+function fallar(msg) {
+  $("error").textContent = msg;
+  $("error").style.display = msg ? "block" : "none";
+  if (msg) $("resultado").hidden = true;
+}
+
+// cadena de ventanas alineada a un bloque [S,E]
+function cadenaBloque(S, E, tope) {
+  const L = E - S;
+  const n = tope ? Math.floor((L - 1) / WIN) + 2 : Math.ceil(L / WIN);
+  const crudo = tope ? S + (L - (n - 2) * WIN) / 2 - WIN : S + L / n - WIN;
+  return { t0: Math.max(0, Math.round(crudo / 5) * 5), n };
+}
+
+// pausa + espaciado mínimo de 5 h entre aperturas
+function ajustarAlarmas(alarmas, pausa, limite) {
+  const out = [];
+  let prev = -Infinity;
+  for (const a of alarmas.sort((x, y) => x.min - y.min)) {
+    let m = Math.max(a.min, prev + WIN);
+    if (pausa && m >= pausa[0] && m < pausa[1]) m = Math.max(pausa[1], prev + WIN);
+    m = Math.round(m / 5) * 5;
+    if (m >= 1440 || (limite != null && m >= limite)) continue;
+    out.push({ min: m, titulo: a.titulo });
+    prev = m;
+  }
+  return out;
+}
+
+function calcular() {
+  fallar("");
+  $("planHint").textContent = t("plan_" + $("plan").value);
+  const tope = intensidad === "tope";
+  let alarmas = [];
+  const bloques = [];
+  let notaExtra = "", limite = null;
+
+  let pausa = null;
+  if (pausaOn) {
+    const pI = aMin($("pausaIni").value), pF = aMin($("pausaFin").value);
+    if (pF <= pI) return fallar(t("err_pausa"));
+    pausa = [pI, pF];
+  }
+
+  if (modo === "horario" || modo === "hibrido") {
+    const S = aMin($("inicio").value), E = aMin($("fin").value);
+    if (E <= S) return fallar(t("err_bloque"));
+    bloques.push([S, E]);
+
+    if (modo === "horario") {
+      const { t0, n } = cadenaBloque(S, E, tope);
+      for (let k = 0; k < n; k++)
+        alarmas.push({ min: t0 + WIN * k, titulo: k === 0 ? t("t_abre") : t("t_recarga") });
+
+      if (bloque2on) {
+        const S2 = aMin($("inicio2").value), E2 = aMin($("fin2").value);
+        if (E2 <= S2) return fallar(t("err_b2"));
+        if (S2 < E) return fallar(t("err_b2_orden"));
+        bloques.push([S2, E2]);
+        const c2 = cadenaBloque(S2, E2, tope);
+        const finCadena1 = t0 + WIN * n;
+        let t02 = c2.t0;
+        if (t02 < finCadena1) {
+          t02 = Math.round(finCadena1 / 5) * 5;
+          notaExtra = t("expl_b2");
+        }
+        for (let k = 0; k < c2.n; k++)
+          alarmas.push({ min: t02 + WIN * k, titulo: k === 0 ? t("t_abre") : t("t_recarga") });
+      }
+    } else {
+      // híbrido: la cadena se ancla al bloque y se extiende por todo el día despierto
+      const W = aMin($("despertar").value), D = aMin($("dormir").value);
+      if (D <= W) return fallar(t("err_sueno"));
+      limite = D;
+      const { t0 } = cadenaBloque(S, E, tope);
+      const first = t0 >= W ? t0 - WIN * Math.floor((t0 - W) / WIN) : W;
+      for (let m = first; m < D; m += WIN) {
+        const enBloque = m < E && m + WIN > S;
+        alarmas.push({ min: m, titulo: m === first ? t("t_abre") : (enBloque ? t("t_recarga") : t("t_cadena")) });
+      }
+      if (!alarmas.length) return fallar(t("err_fuera"));
+      notaExtra = t("expl_hib");
+    }
+  } else {
+    const W = aMin($("despertar").value), D = aMin($("dormir").value);
+    if (D <= W) return fallar(t("err_sueno"));
+    limite = D;
+    for (let m = W; m < D; m += WIN)
+      alarmas.push({ min: m, titulo: m === W ? t("t_primera") : t("t_cadena") });
+  }
+
+  alarmas = ajustarAlarmas(alarmas, pausa, limite);
+  if (!alarmas.length) return fallar(t("err_fuera"));
+
+  estado = {
+    alarmas, bloques, notaExtra, pausa,
+    ventanas: alarmas.map(a => [a.min, Math.min(a.min + WIN, 1440)]),
+  };
+  pintar();
+}
+
+/* ================= render ================= */
+
+function pintar() {
+  if (!estado) return;
+  const { alarmas, bloques, ventanas, notaExtra, pausa } = estado;
+  const n = ventanas.length;
+  $("resultado").hidden = false;
+
+  $("legChipWin").style.background = css("--win-b");
+  $("legChipWork").style.background = css("--work");
+  $("legTri").style.color = css("--work");
+
+  $("statVentanas").textContent = n;
+  $("statVentanasLabel").textContent = t(n === 1 ? "stat_v1" : "stat_vn");
+  $("statPrimera").textContent = aHora(alarmas[0].min);
+  $("leyendaPausa").style.display = pausa ? "inline-flex" : "none";
+
+  if (bloques.length) {
+    const enBloque = ventanas.filter(v => bloques.some(b => v[0] < b[1] && v[1] > b[0])).length;
+    $("statCapacidad").textContent = enBloque + "×";
+    $("statCapacidadLabel").textContent = t(bloques.length > 1 ? "stat_cap_bs" : "stat_cap_b");
+    $("leyendaBloque").style.display = "inline-flex";
+    $("explicacion").textContent =
+      (enBloque === 1 ? t("expl_1") : t("expl_n")(enBloque, bloques.length > 1)) + notaExtra;
+    const rescatadas = Math.max(0, enBloque - bloques.length) * 5 * Math.max(1, diasElegidos().length);
+    $("statRescView").style.display = rescatadas ? "grid" : "none";
+    $("statResc").textContent = "+" + rescatadas + " h";
+  } else {
+    const horas = Math.round((ventanas[n - 1][1] - ventanas[0][0]) / 60);
+    $("statCapacidad").textContent = horas + " h";
+    $("statCapacidadLabel").textContent = t("stat_cob");
+    $("leyendaBloque").style.display = "none";
+    $("statRescView").style.display = "none";
+    $("explicacion").textContent = t("expl_loop")(n);
+  }
+
+  const dias = diasElegidos();
+  $("listaAlarmas").innerHTML = alarmas.map(a =>
+    `<div class="alarma"><span class="icono">🔔</span><span class="hora">${aHora(a.min)}</span><span class="que">${a.titulo}</span><a class="gcal" target="_blank" rel="noopener" href="${gcalURL(a, dias)}">${t("gcal")}</a></div>`
+  ).join("");
+
+  $("timeline").innerHTML = timelineSVG();
+}
+
+// SVG con colores resueltos (hex) para que también sirva al exportar PNG
+function timelineSVG() {
+  const { alarmas, bloques, ventanas, pausa } = estado;
+  const C = {
+    grid: css("--grid"), muted: css("--muted"), ink: css("--ink"), ink2: css("--ink-2"),
+    winA: css("--win-a"), winB: css("--win-b"), work: css("--work"),
+  };
+  const Wpx = 692, H = 112, y0 = 42, hBar = 26;
+  const x = min => 12 + (min / 1440) * (Wpx - 24);
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${Wpx} ${H}" width="100%" font-family="system-ui, sans-serif" role="img" aria-label="Timeline">`;
+  for (let h = 0; h <= 24; h += 3) {
+    const px = x(h * 60);
+    svg += `<line x1="${px}" y1="${y0 - 4}" x2="${px}" y2="${y0 + hBar + 16}" stroke="${C.grid}"/>`;
+    svg += `<text x="${px}" y="${H - 8}" text-anchor="middle" font-size="10" fill="${C.muted}">${String(h).padStart(2, "0")}</text>`;
+  }
+  if (pausa)
+    svg += `<rect x="${x(pausa[0])}" y="${y0}" width="${x(pausa[1]) - x(pausa[0])}" height="${hBar}" rx="5" fill="${C.grid}" opacity="0.7"><title>☕ ${aHora(pausa[0])}–${aHora(pausa[1])}</title></rect>`;
+  bloques.forEach(b => {
+    svg += `<rect x="${x(b[0])}" y="${y0 + hBar + 6}" width="${x(b[1]) - x(b[0])}" height="6" rx="3" fill="${C.work}"><title>${aHora(b[0])}–${aHora(b[1])}</title></rect>`;
+  });
+  ventanas.forEach(([a, b], i) => {
+    const wpx = x(b) - x(a) - 2;
+    svg += `<rect x="${x(a) + 1}" y="${y0}" width="${wpx}" height="${hBar}" rx="5" fill="${i % 2 ? C.winA : C.winB}"><title>V${i + 1}: ${aHora(a)}–${aHora(b)}</title></rect>`;
+    if (wpx > 46)
+      svg += `<text x="${x(a) + wpx / 2 + 1}" y="${y0 + hBar / 2 + 4}" text-anchor="middle" font-size="10.5" font-weight="700" fill="${i % 2 ? C.ink : "#fff"}">V${i + 1}</text>`;
+  });
+  alarmas.forEach(a => {
+    svg += `<path d="M ${x(a.min)} ${y0 - 7} l 5.5 -9 l -11 0 z" fill="${C.work}"/>`;
+    svg += `<text x="${x(a.min)}" y="${y0 - 21}" text-anchor="middle" font-size="10" font-weight="600" fill="${C.ink2}">${aHora(a.min)}</text>`;
+  });
+  return svg + "</svg>";
+}
+
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { pintar(); pintarHist(); });
+
+/* ================= exportar PNG ================= */
+
+function exportarPNG() {
+  const svg = timelineSVG().replace('width="100%"', 'width="1384" height="224"');
+  const img = new Image();
+  img.onload = () => {
+    const cv = document.createElement("canvas");
+    cv.width = 1440; cv.height = 400;
+    const ctx = cv.getContext("2d");
+    ctx.fillStyle = css("--surface"); ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.fillStyle = css("--ink");
+    ctx.font = "700 40px system-ui, sans-serif";
+    ctx.fillText(t("png_title"), 28, 62);
+    ctx.drawImage(img, 28, 100);
+    ctx.fillStyle = css("--muted");
+    ctx.font = "600 24px system-ui, sans-serif";
+    ctx.fillText(t("png_brand"), 28, 372);
+    cv.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url; link.download = "ventana5-cronograma.png"; link.click();
+      URL.revokeObjectURL(url);
+    });
+  };
+  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
+
+/* ================= calendario ================= */
+
+function proximaFecha(dias) {
+  const idxDia = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
+  const d = new Date();
+  while (!dias.some(dd => idxDia[dd] === d.getDay())) d.setDate(d.getDate() + 1);
+  return d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0");
+}
+
+function gcalURL(a, dias) {
+  if (!dias.length) return "#";
+  const fecha = proximaFecha(dias);
+  const ini = fecha + "T" + aHora(a.min).replace(":", "") + "00";
+  const fin = fecha + "T" + aHora(a.min + 5).replace(":", "") + "00";
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE"
+    + "&text=" + encodeURIComponent("🔔 " + a.titulo)
+    + "&dates=" + ini + "/" + fin
+    + "&recur=" + encodeURIComponent("RRULE:FREQ=WEEKLY;BYDAY=" + dias.join(","))
+    + "&details=" + encodeURIComponent("Ventana5");
+}
+
+function descargarICS() {
+  const dias = diasElegidos();
+  if (!dias.length) return fallar(t("err_dias"));
+  const fecha = proximaFecha(dias);
+  const byday = dias.join(",");
+
+  let ics = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Ventana5//ES\r\n";
+  estado.alarmas.forEach((a, i) => {
+    const hora = aHora(a.min).replace(":", "") + "00";
+    ics += "BEGIN:VEVENT\r\n"
+      + `UID:ventana5-${i}-${fecha}@ventana5\r\n`
+      + `DTSTART:${fecha}T${hora}\r\n`
+      + "DURATION:PT5M\r\n"
+      + `RRULE:FREQ=WEEKLY;BYDAY=${byday}\r\n`
+      + `SUMMARY:🔔 ${a.titulo}\r\n`
+      + "BEGIN:VALARM\r\nACTION:DISPLAY\r\nTRIGGER:-PT0M\r\nDESCRIPTION:Ventana5\r\nEND:VALARM\r\n"
+      + "END:VEVENT\r\n";
+  });
+  ics += "END:VCALENDAR\r\n";
+
+  const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+  const link = document.createElement("a");
+  link.href = url; link.download = "ventana5-alarmas.ics"; link.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ================= compartir ================= */
+
+function feedbackBoton(id, texto, claveOriginal) {
+  $(id).textContent = texto;
+  setTimeout(() => { $(id).textContent = t(claveOriginal); }, 2000);
+}
+
+function copiarDisparador() {
+  navigator.clipboard.writeText(t("disparador"))
+    .then(() => feedbackBoton("copiar", t("btn_msg_ok"), "btn_msg"));
+}
+
+function compartirSetup() {
+  const p = new URLSearchParams();
+  p.set("m", modo); p.set("p", $("plan").value); p.set("x", intensidad); p.set("l", lang);
+  p.set("i", $("inicio").value); p.set("f", $("fin").value);
+  if (bloque2on) { p.set("i2", $("inicio2").value); p.set("f2", $("fin2").value); }
+  if (pausaOn) { p.set("pi", $("pausaIni").value); p.set("pf", $("pausaFin").value); }
+  p.set("w", $("despertar").value); p.set("s", $("dormir").value);
+  p.set("d", diasElegidos().join(","));
+  navigator.clipboard.writeText(location.href.split("?")[0] + "?" + p.toString())
+    .then(() => feedbackBoton("compartir", t("btn_share_ok"), "btn_share"));
+}
+
+function cargarSetup() {
+  const p = new URLSearchParams(location.search);
+  if (!p.size) return;
+  const set = (id, v) => { if (v) $(id).value = v; };
+  if (p.get("l")) lang = p.get("l");
+  set("plan", p.get("p")); set("inicio", p.get("i")); set("fin", p.get("f"));
+  set("despertar", p.get("w")); set("dormir", p.get("s"));
+  if (p.get("i2")) {
+    bloque2on = true; $("grupoBloque2").hidden = false;
+    set("inicio2", p.get("i2")); set("fin2", p.get("f2"));
+  }
+  if (p.get("pi")) {
+    pausaOn = true; $("grupoPausa").hidden = false;
+    set("pausaIni", p.get("pi")); set("pausaFin", p.get("pf"));
+  }
+  if (p.get("d")) marcarDias(p.get("d").split(","));
+  if (p.get("x")) { intensidad = p.get("x"); marcarSeg("intensidad", "int", intensidad); }
+  if (p.get("m")) { modo = p.get("m"); marcarSeg("modo", "modo", modo); }
+  $("grupoHorario").hidden = modo === "loop";
+  $("grupoLoop").hidden = modo === "horario";
+  $("zonaBloque2").style.display = modo === "horario" ? "block" : "none";
+  $("grupoIntensidad").style.display = modo === "loop" ? "none" : "grid";
+}
+
+/* ================= ventana en vivo ================= */
+
+const LS_OPEN = "v5_open", LS_NOTIF = "v5_notified", LS_NOTIF30 = "v5_notified30", LS_HIST = "v5_hist";
+
+function abrirVentanaVivo() {
+  localStorage.setItem(LS_OPEN, Date.now());
+  localStorage.removeItem(LS_NOTIF);
+  localStorage.removeItem(LS_NOTIF30);
+  const hist = JSON.parse(localStorage.getItem(LS_HIST) || "[]");
+  hist.push(Date.now());
+  localStorage.setItem(LS_HIST, JSON.stringify(hist.slice(-500)));
+  if ("Notification" in window && Notification.permission === "default")
+    Notification.requestPermission();
+  tickVivo(); pintarHist();
+}
+
+function descartarVivo() {
+  localStorage.removeItem(LS_OPEN);
+  localStorage.removeItem(LS_NOTIF);
+  localStorage.removeItem(LS_NOTIF30);
+  tickVivo();
+}
+
+function notificar(clave, flag) {
+  if (!localStorage.getItem(flag) && "Notification" in window && Notification.permission === "granted") {
+    new Notification("⏳ Ventana5", { body: t(clave) });
+    localStorage.setItem(flag, "1");
+  }
+}
+
+function tickVivo() {
+  const abierta = Number(localStorage.getItem(LS_OPEN));
+  const activo = abierta > 0;
+  $("vivoOff").hidden = activo;
+  $("vivoOn").hidden = !activo;
+  if (!activo) return;
+
+  const resta = abierta + DUR_MS - Date.now();
+  const fin = new Date(abierta + DUR_MS);
+  const finTxt = String(fin.getHours()).padStart(2, "0") + ":" + String(fin.getMinutes()).padStart(2, "0");
+
+  if (resta > 0) {
+    const h = Math.floor(resta / 3600000), m = Math.floor(resta / 60000) % 60, s = Math.floor(resta / 1000) % 60;
+    $("vivoTiempo").textContent = `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    $("vivoBarra").style.width = (100 * (1 - resta / DUR_MS)).toFixed(1) + "%";
+    const muriendo = resta < 30 * 60000;
+    $("vivoBarraCont").classList.toggle("alerta", muriendo);
+    $("vivoDetalle").textContent = muriendo ? t("vivo_dying")(finTxt) : t("vivo_run")(finTxt);
+    if (muriendo) notificar("notif_dying", LS_NOTIF30);
+    $("vivoReiniciar").hidden = true;
+  } else {
+    $("vivoTiempo").textContent = t("vivo_full_t");
+    $("vivoBarra").style.width = "100%";
+    $("vivoBarraCont").classList.remove("alerta");
+    $("vivoDetalle").textContent = t("vivo_full");
+    $("vivoReiniciar").hidden = false;
+    notificar("notif_full", LS_NOTIF);
+  }
+}
+
+/* ---- historial ---- */
+
+function pintarHist() {
+  const hist = JSON.parse(localStorage.getItem(LS_HIST) || "[]");
+  $("histZona").hidden = !hist.length;
+  if (!hist.length) return;
+
+  const cuentas = Array.from({ length: 7 }, () => new Array(24).fill(0));
+  hist.forEach(ts => {
+    const d = new Date(ts);
+    cuentas[(d.getDay() + 6) % 7][d.getHours()]++; // lunes = fila 0
+  });
+  const max = Math.max(...cuentas.flat(), 1);
+  const nombres = ["d_mo", "d_tu", "d_we", "d_th", "d_fr", "d_sa", "d_su"].map(k => t(k));
+  const cw = 24, ch = 16, x0 = 40;
+  const W = x0 + 24 * cw + 8, H = 7 * ch + 26;
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" font-family="system-ui, sans-serif">`;
+  const acc = css("--accent"), grid = css("--grid"), muted = css("--muted");
+  for (let f = 0; f < 7; f++) {
+    svg += `<text x="${x0 - 8}" y="${f * ch + 12}" text-anchor="end" font-size="9" fill="${muted}">${nombres[f]}</text>`;
+    for (let h = 0; h < 24; h++) {
+      const c = cuentas[f][h];
+      const op = c ? (0.2 + 0.8 * c / max).toFixed(2) : 0;
+      svg += `<rect x="${x0 + h * cw}" y="${f * ch}" width="${cw - 2}" height="${ch - 2}" rx="3" fill="${c ? acc : grid}" ${c ? `opacity="${op}"` : 'opacity="0.4"'}><title>${nombres[f]} ${String(h).padStart(2, "0")}:00 — ${c}</title></rect>`;
+    }
+  }
+  for (let h = 0; h < 24; h += 6)
+    svg += `<text x="${x0 + h * cw}" y="${7 * ch + 14}" font-size="9" fill="${muted}">${String(h).padStart(2, "0")}</text>`;
+  $("histMapa").innerHTML = svg + "</svg>";
+}
+
+/* ================= ritmo semanal ================= */
+
+function ritmoSemanal() {
+  const pct = Number($("pctUsado").value);
+  if (!$("pctUsado").value || pct < 0 || pct > 100) { $("ritmoOut").hidden = true; return; }
+  const diaReset = Number($("diaReset").value);
+  const [hR, mR] = $("horaReset").value.split(":").map(Number);
+  const ahora = new Date();
+  const ultimoReset = new Date(ahora);
+  ultimoReset.setHours(hR, mR, 0, 0);
+  ultimoReset.setDate(ultimoReset.getDate() - ((ahora.getDay() - diaReset + 7) % 7));
+  if (ultimoReset > ahora) ultimoReset.setDate(ultimoReset.getDate() - 7);
+  const esperado = Math.min(100, 100 * (ahora - ultimoReset) / (7 * 86400000));
+
+  $("ritmoOut").hidden = false;
+  $("barraUsado").style.width = pct + "%";
+  $("barraEsperado").style.width = esperado.toFixed(0) + "%";
+  $("pctUsadoTxt").textContent = pct + "%";
+  $("pctEsperadoTxt").textContent = esperado.toFixed(0) + "%";
+
+  const delta = pct - esperado;
+  $("ritmoMsg").textContent =
+    delta > 12 ? t("ritmo_fast")(pct, esperado.toFixed(0)) :
+    delta < -12 ? t("ritmo_slow")(pct, esperado.toFixed(0)) :
+    t("ritmo_ok");
+}
+
+/* ================= init ================= */
+
+$("descargar").addEventListener("click", descargarICS);
+$("copiar").addEventListener("click", copiarDisparador);
+$("compartir").addEventListener("click", compartirSetup);
+$("exportar").addEventListener("click", exportarPNG);
+$("abrirVentana").addEventListener("click", abrirVentanaVivo);
+$("vivoReiniciar").addEventListener("click", abrirVentanaVivo);
+$("vivoDescartar").addEventListener("click", descartarVivo);
+["pctUsado", "diaReset", "horaReset"].forEach(id => $(id).addEventListener("input", ritmoSemanal));
+
+cargarSetup();
+aplicarIdioma();
+tickVivo();
+setInterval(tickVivo, 1000);
+</script>
+</body>
+</html>
