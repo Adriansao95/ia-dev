@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ventana5 — Exprime tu suscripción de Claude</title>
-<meta name="description" content="Deja de regalar tokens que ya pagaste: Ventana5 alinea las ventanas de 5 horas de Claude con tu horario real.">
+<title>TokenTiming — Exprime tu suscripción de Claude</title>
+<meta name="description" content="Deja de regalar tokens que ya pagaste: TokenTiming alinea las ventanas de 5 horas de Claude con tu horario real.">
 <meta name="theme-color" content="#2a78d6">
-<meta property="og:title" content="Ventana5 — Deja de regalar tokens que ya pagaste">
-<meta property="og:description" content="Tu suscripción de Claude se recarga cada 5 horas. Ventana5 te dice a qué hora abrir cada ventana para aprovechar cada token.">
+<meta property="og:title" content="TokenTiming — Deja de regalar tokens que ya pagaste">
+<meta property="og:description" content="Tu suscripción de Claude se recarga cada 5 horas. TokenTiming te dice a qué hora abrir cada ventana para aprovechar cada token.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://adriansao95.github.io/ia-dev/">
 <meta property="og:image" content="https://adriansao95.github.io/ia-dev/og.png">
 <!-- TODO: generar og.png (usa el botón de exportar PNG) y subirlo al repo -->
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>">
-<link rel="manifest" href='data:application/manifest+json,{"name":"Ventana5","short_name":"Ventana5","start_url":".","display":"standalone","background_color":"%230d0d0d","theme_color":"%232a78d6"}'>
+<link rel="manifest" href='data:application/manifest+json,{"name":"TokenTiming","short_name":"TokenTiming","start_url":".","display":"standalone","background_color":"%230d0d0d","theme_color":"%232a78d6"}'>
 <style>
   :root {
     color-scheme: light;
@@ -181,6 +181,19 @@
   details[open] summary { margin-bottom: 8px; }
   details p { font-size: 0.88rem; color: var(--ink-2); margin-bottom: 6px; }
 
+  .info-btn {
+    width: 22px; height: 22px; border-radius: 50%; flex: none;
+    border: 1px solid var(--grid); background: var(--page); color: var(--muted);
+    font-size: 0.75rem; font-weight: 800; line-height: 1; cursor: pointer;
+  }
+  .info-btn[aria-expanded="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .callout {
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 0.86rem; color: var(--ink-2); line-height: 1.6;
+  }
+  .callout b { color: var(--ink); }
+
   .ritmo { display: grid; gap: 8px; }
   .ritmo .fila { display: grid; grid-template-columns: 84px 1fr 48px; gap: 10px; align-items: center; font-size: 0.82rem; color: var(--ink-2); }
   .ritmo .fila b { font-variant-numeric: tabular-nums; }
@@ -209,13 +222,14 @@
 <main>
   <header>
     <button id="idioma" type="button">EN</button>
-    <div class="logo">⏳ Ventana<span>5</span></div>
+    <div class="logo">⏳ Token<span>Timing</span></div>
     <p class="claim" data-i18n="claim"></p>
     <p data-i18n="sub"></p>
   </header>
 
   <section class="card">
-    <h2><span class="paso">1</span> <span data-i18n="s1"></span></h2>
+    <h2><span class="paso">1</span> <span data-i18n="s1"></span> <button type="button" class="info-btn" data-info="infoS1" aria-expanded="false" aria-label="Info">?</button></h2>
+    <div class="callout" id="infoS1" hidden data-i18n-html="info_s1"></div>
 
     <div class="field"><span data-i18n="presets_l"></span>
       <div class="chips presets" id="presets">
@@ -310,7 +324,8 @@
   </section>
 
   <section class="card" id="resultado" hidden>
-    <h2><span class="paso">2</span> <span data-i18n="s2"></span></h2>
+    <h2><span class="paso">2</span> <span data-i18n="s2"></span> <button type="button" class="info-btn" data-info="infoS2" aria-expanded="false" aria-label="Info">?</button></h2>
+    <div class="callout" id="infoS2" hidden data-i18n-html="info_s2"></div>
 
     <div class="stats">
       <div class="stat"><b id="statVentanas">—</b><span id="statVentanasLabel"></span></div>
@@ -347,7 +362,8 @@
   </section>
 
   <section class="card">
-    <h2><span class="paso">3</span> <span data-i18n="s3"></span></h2>
+    <h2><span class="paso">3</span> <span data-i18n="s3"></span> <button type="button" class="info-btn" data-info="infoS3" aria-expanded="false" aria-label="Info">?</button></h2>
+    <div class="callout" id="infoS3" hidden data-i18n-html="info_s3"></div>
     <div class="cuenta" id="vivoOff">
       <p class="nota" data-i18n="vivo_off"></p>
       <button class="btn" id="abrirVentana"></button>
@@ -371,7 +387,8 @@
   </section>
 
   <section class="card">
-    <h2><span class="paso">4</span> <span data-i18n="s4"></span></h2>
+    <h2><span class="paso">4</span> <span data-i18n="s4"></span> <button type="button" class="info-btn" data-info="infoS4" aria-expanded="false" aria-label="Info">?</button></h2>
+    <div class="callout" id="infoS4" hidden data-i18n-html="info_s4"></div>
     <p class="nota" data-i18n-html="s4_hint"></p>
     <div class="row">
       <label class="field"><span data-i18n="pct_l"></span>
@@ -429,7 +446,7 @@ const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).
 const STR = {
 es: {
   claim: "Deja de regalar tokens que ya pagaste.",
-  sub: "Tu suscripción de Claude se recarga cada 5 horas, y el reloj arranca con tu primer mensaje. Ventana5 te dice a qué hora abrir cada ventana para que las recargas caigan justo cuando más las necesitas.",
+  sub: "Tu suscripción de Claude se recarga cada 5 horas, y el reloj arranca con tu primer mensaje. TokenTiming te dice a qué hora abrir cada ventana para que las recargas caigan justo cuando más las necesitas.",
   s1: "¿Cómo usas Claude?", s2: "Tu cronograma", s3: "Tu ventana en vivo", s4: "Tu ritmo semanal",
   presets_l: "Empieza con un clic",
   p_oficina: "Oficina 9–6", p_free: "Freelancer", p_noct: "Nocturno", p_finde: "Fin de semana",
@@ -503,13 +520,17 @@ es: {
   wiz_q3: "¿Qué días?",
   wiz_q3a: "Entre semana", wiz_q3b: "Todos los días", wiz_q3c: "Solo fines de semana",
   wiz_close: "Cerrar",
-  png_title: "Mi cronograma Ventana5",
-  png_brand: "⏳ Ventana5 · hecho por Adrián Rodríguez",
+  png_title: "Mi cronograma TokenTiming",
+  png_brand: "⏳ TokenTiming · hecho por Adrián Rodríguez",
   footer: "Hecho por Adrián Rodríguez ·", footer_cta: "Sígueme en LinkedIn",
+  info_s1: 'Cada campo ajusta el cronograma al instante. <b>Plan</b>: cuánta capacidad trae cada ventana. <b>Días</b>: qué días suenan las alarmas. <b>Tu ritmo</b>: «Horario específico» si trabajas a tope en horas fijas, «Híbrido» si además usas Claude suelto el resto del día, «Loop continuo» si lo usas sin horario. <b>Intensidad</b>: «Máxima capacidad» agrega una apertura extra para que una recarga caiga dentro de tu bloque. <b>Pausa</b>: mueve las alarmas que caerían en tu almuerzo o descanso.',
+  info_s2: 'Cómo leerlo: cada <b>barra azul</b> es una ventana de 5 h de capacidad; el <b>triángulo naranja</b> es la alarma para abrirla (mandas un mensaje corto a Claude y ya) y la <b>línea naranja</b> es tu bloque de trabajo. Las tarjetas de arriba resumen el resultado. Llévate las alarmas a tu calendario para no depender de esta página.',
+  info_s3: 'Tu compañero del día a día: cuando le mandes el primer mensaje a Claude, márcalo aquí. Verás la cuenta regresiva hasta la recarga, te aviso si la ventana se muere sin usar, y cada apertura arma tu historial real de la semana.',
+  info_s4: 'Tu plan tiene dos límites: el de cada ventana de 5 h y uno semanal. Si el semanal se agota, no hay más hasta el reinicio — por eso conviene dosificar. Compara tu % usado contra lo esperado: si vas lento, acelera tranquilo; si vas rápido, guarda para los días que faltan.',
 },
 en: {
   claim: "Stop giving away tokens you already paid for.",
-  sub: "Your Claude subscription recharges every 5 hours, and the clock starts with your first message. Ventana5 tells you when to open each window so the recharges land exactly when you need them most.",
+  sub: "Your Claude subscription recharges every 5 hours, and the clock starts with your first message. TokenTiming tells you when to open each window so the recharges land exactly when you need them most.",
   s1: "How do you use Claude?", s2: "Your schedule", s3: "Your live window", s4: "Your weekly pace",
   presets_l: "Start with one click",
   p_oficina: "Office 9–6", p_free: "Freelancer", p_noct: "Night owl", p_finde: "Weekend",
@@ -583,9 +604,13 @@ en: {
   wiz_q3: "Which days?",
   wiz_q3a: "Weekdays", wiz_q3b: "Every day", wiz_q3c: "Weekends only",
   wiz_close: "Close",
-  png_title: "My Ventana5 schedule",
-  png_brand: "⏳ Ventana5 · made by Adrián Rodríguez",
+  png_title: "My TokenTiming schedule",
+  png_brand: "⏳ TokenTiming · made by Adrián Rodríguez",
   footer: "Made by Adrián Rodríguez ·", footer_cta: "Follow me on LinkedIn",
+  info_s1: 'Every field updates the schedule instantly. <b>Plan</b>: how much capacity each window carries. <b>Days</b>: which days the alarms ring. <b>Your rhythm</b>: “Fixed schedule” for deep work at set hours, “Hybrid” if you also use Claude casually the rest of the day, “Continuous loop” if you use it with no set schedule. <b>Intensity</b>: “Max capacity” adds an extra opening so a recharge lands inside your block. <b>Break</b>: shifts alarms that would land on your lunch or rest.',
+  info_s2: 'How to read it: each <b>blue bar</b> is a 5-hour window of capacity; the <b>orange triangle</b> is the alarm to open it (one short message to Claude and done) and the <b>orange line</b> is your work block. The cards above sum up the result. Take the alarms to your calendar so you don\'t depend on this page.',
+  info_s3: 'Your day-to-day companion: when you send Claude your first message, mark it here. You\'ll see the countdown to the recharge, I\'ll warn you if the window is dying unused, and every opening builds your real weekly history.',
+  info_s4: 'Your plan has two limits: the 5-hour window and a weekly one. If the weekly runs out, there\'s nothing left until the reset — so pace yourself. Compare your % used against what\'s expected: behind pace, speed up freely; ahead of pace, save some for the days left.',
 },
 };
 
@@ -665,6 +690,14 @@ $("dias").querySelectorAll("button").forEach(b =>
   b.addEventListener("click", () => {
     b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true");
     pintar();
+  })
+);
+
+document.querySelectorAll(".info-btn").forEach(b =>
+  b.addEventListener("click", () => {
+    const panel = $(b.dataset.info);
+    panel.hidden = !panel.hidden;
+    b.setAttribute("aria-expanded", String(!panel.hidden));
   })
 );
 
@@ -949,7 +982,7 @@ function exportarPNG() {
     cv.toBlob(blob => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.href = url; link.download = "ventana5-cronograma.png"; link.click();
+      link.href = url; link.download = "tokentiming-cronograma.png"; link.click();
       URL.revokeObjectURL(url);
     });
   };
@@ -974,7 +1007,7 @@ function gcalURL(a, dias) {
     + "&text=" + encodeURIComponent("🔔 " + a.titulo)
     + "&dates=" + ini + "/" + fin
     + "&recur=" + encodeURIComponent("RRULE:FREQ=WEEKLY;BYDAY=" + dias.join(","))
-    + "&details=" + encodeURIComponent("Ventana5");
+    + "&details=" + encodeURIComponent("TokenTiming");
 }
 
 function descargarICS() {
@@ -983,23 +1016,23 @@ function descargarICS() {
   const fecha = proximaFecha(dias);
   const byday = dias.join(",");
 
-  let ics = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Ventana5//ES\r\n";
+  let ics = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//TokenTiming//ES\r\n";
   estado.alarmas.forEach((a, i) => {
     const hora = aHora(a.min).replace(":", "") + "00";
     ics += "BEGIN:VEVENT\r\n"
-      + `UID:ventana5-${i}-${fecha}@ventana5\r\n`
+      + `UID:tokentiming-${i}-${fecha}@tokentiming\r\n`
       + `DTSTART:${fecha}T${hora}\r\n`
       + "DURATION:PT5M\r\n"
       + `RRULE:FREQ=WEEKLY;BYDAY=${byday}\r\n`
       + `SUMMARY:🔔 ${a.titulo}\r\n`
-      + "BEGIN:VALARM\r\nACTION:DISPLAY\r\nTRIGGER:-PT0M\r\nDESCRIPTION:Ventana5\r\nEND:VALARM\r\n"
+      + "BEGIN:VALARM\r\nACTION:DISPLAY\r\nTRIGGER:-PT0M\r\nDESCRIPTION:TokenTiming\r\nEND:VALARM\r\n"
       + "END:VEVENT\r\n";
   });
   ics += "END:VCALENDAR\r\n";
 
   const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
   const link = document.createElement("a");
-  link.href = url; link.download = "ventana5-alarmas.ics"; link.click();
+  link.href = url; link.download = "tokentiming-alarmas.ics"; link.click();
   URL.revokeObjectURL(url);
 }
 
@@ -1076,7 +1109,7 @@ function descartarVivo() {
 
 function notificar(clave, flag) {
   if (!localStorage.getItem(flag) && "Notification" in window && Notification.permission === "granted") {
-    new Notification("⏳ Ventana5", { body: t(clave) });
+    new Notification("⏳ TokenTiming", { body: t(clave) });
     localStorage.setItem(flag, "1");
   }
 }
