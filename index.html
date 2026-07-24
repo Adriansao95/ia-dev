@@ -122,6 +122,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
   <div style="display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start;margin-top:30px">
 
     <div style="flex:1 1 340px;min-width:0;background:#12141a;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;display:grid;gap:20px;position:sticky;top:16px">
+      <span data-i18n="st1" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f6b04e">01 · Configura tu jornada</span>
       <div style="display:grid;gap:9px">
         <span data-i18n="presets_l" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Empieza con un clic</span>
         <div style="display:flex;flex-wrap:wrap;gap:8px">
@@ -133,7 +134,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
         </div>
       </div>
 
-      <div style="display:grid;gap:9px">
+      <div style="display:{{ advDisp }};order:8;gap:9px">
         <span data-i18n="plan_l" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Tu plan</span>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#0e1015;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:4px">
           <button type="button" data-v="pro" aria-pressed="{{ planPr.pro }}" onClick="{{ setPlan }}" style="font-family:inherit;border:none;border-radius:9px;padding:9px 6px;cursor:pointer;font-weight:600;font-size:13.5px;transition:background .25s,color .25s;background:{{ planBg.pro }};color:{{ planInk.pro }}">Pro</button>
@@ -162,7 +163,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
         <span data-i18n="h_horario" style="grid-column:1/-1;font-size:12px;color:#6b7280">Las horas en que arrancas y cierras tu trabajo fuerte con Claude.</span>
       </div>
 
-      <div style="display:{{ showB2zone }}">
+      <div style="display:{{ showB2zone }};order:8">
         <button type="button" onClick="{{ toggleB2 }}" style="font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px dashed rgba(255,255,255,.18);background:transparent;color:#9aa1ad" style-hover="border-color:#f6b04e;color:#f6b04e">{{ b2Label }}</button>
         <div style="display:{{ showB2 }};grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
           <label style="display:grid;gap:7px"><span data-i18n="b2_ini" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Bloque 2 empieza</span>
@@ -184,7 +185,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
         <span data-i18n="h_loop" style="grid-column:1/-1;font-size:12px;color:#6b7280">Antes de despertar y después de dormir no suena ninguna alarma.</span>
       </div>
 
-      <div>
+      <div style="display:{{ advDispB }};order:8">
         <button type="button" onClick="{{ togglePausa }}" style="font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px dashed rgba(255,255,255,.18);background:transparent;color:#9aa1ad" style-hover="border-color:#f6b04e;color:#f6b04e">{{ pausaLabel }}</button>
         <div style="display:{{ showPausa }};grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
           <label style="display:grid;gap:7px"><span data-i18n="pausa_ini" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Pausa desde</span>
@@ -197,7 +198,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
         </div>
       </div>
 
-      <div style="display:{{ showInt }};gap:9px">
+      <div style="display:{{ showInt }};order:8;gap:9px">
         <span data-i18n="int_l" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Intensidad en tu bloque</span>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:4px;background:#0e1015;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:4px">
           <button type="button" data-v="normal" aria-pressed="{{ intPr.normal }}" onClick="{{ setInt }}" style="font-family:inherit;border:none;border-radius:9px;padding:9px 8px;cursor:pointer;display:grid;gap:1px;font-weight:600;font-size:13px;transition:background .25s,color .25s;background:{{ intBg.normal }};color:{{ intInk.normal }}"><span data-i18n="i_n">Cubrir mi bloque</span><span data-i18n="i_n_s" style="font-weight:400;font-size:11px;opacity:.75">mínimas alarmas</span></button>
@@ -219,11 +220,14 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
         </div>
       </div>
 
-      <p style="display:{{ errorDisp }};margin:0;font-size:13.5px;font-weight:600;color:#ef6a6a">{{ errorTxt }}</p>
+      <button type="button" onClick="{{ toggleAdv }}" style="order:7;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px dashed rgba(255,255,255,.18);background:transparent;color:#9aa1ad" style-hover="border-color:#f6b04e;color:#f6b04e">{{ advLabel }}</button>
+
+      <p style="display:{{ errorDisp }};order:9;margin:0;font-size:13.5px;font-weight:600;color:#ef6a6a">{{ errorTxt }}</p>
     </div>
 
     <div style="flex:1.6 1 480px;min-width:0;display:grid;gap:22px">
       <div style="min-width:0;background:#12141a;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:clamp(18px,3vw,26px);display:grid;gap:20px;opacity:{{ resOp }};transition:opacity .3s;pointer-events:{{ resPe }}">
+        <span data-i18n="st2" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f6b04e">02 · Tu cronograma</span>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
           <div style="background:#0e1015;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 16px;display:grid;gap:2px">
             <span style="font-family:'IBM Plex Mono',monospace;font-size:clamp(22px,2.6vw,30px);font-weight:600;color:#f6b04e">{{ stN }}</span>
@@ -296,8 +300,11 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
           </sc-for>
         </div>
 
-        <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:18px;display:grid;gap:12px">
-          <span data-i18n="ent_l" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Cómo activar tus alarmas</span>
+      </div>
+
+      <div style="min-width:0;background:#12141a;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:clamp(18px,3vw,26px);display:grid;gap:14px;opacity:{{ resOp }};transition:opacity .3s;pointer-events:{{ resPe }}">
+        <span data-i18n="st3" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f6b04e">03 · Actívalo</span>
+        <span data-i18n="ent_l" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Cómo activar tus alarmas</span>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:4px;background:#0e1015;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:4px">
             <button type="button" data-v="cowork" aria-pressed="{{ entPr.cowork }}" onClick="{{ setEntrega }}" style="font-family:inherit;border:none;border-radius:9px;padding:9px 8px;cursor:pointer;display:grid;gap:1px;font-weight:600;font-size:13px;transition:background .25s,color .25s;background:{{ entBg.cowork }};color:{{ entInk.cowork }}"><span data-i18n="ent_cw">Automático con Cowork</span><span data-i18n="ent_cw_s" style="font-weight:400;font-size:11px;opacity:.75">Claude abre la ventana por ti</span></button>
             <button type="button" data-v="manual" aria-pressed="{{ entPr.manual }}" onClick="{{ setEntrega }}" style="font-family:inherit;border:none;border-radius:9px;padding:9px 8px;cursor:pointer;display:grid;gap:1px;font-weight:600;font-size:13px;transition:background .25s,color .25s;background:{{ entBg.manual }};color:{{ entInk.manual }}"><span data-i18n="ent_man">Manual con calendario</span><span data-i18n="ent_man_s" style="font-weight:400;font-size:11px;opacity:.75">alarmas .ics + mensaje tuyo</span></button>
@@ -305,10 +312,10 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
 
           <div style="display:{{ showCowork }};gap:12px">
             <p data-i18n="cw_intro" style="margin:0;font-size:13.5px;line-height:1.6;color:#9aa1ad">Las tareas programadas de Claude abren la ventana por ti: se ejecutan solas a la hora exacta — aunque tu compu esté apagada — y te notifican en el celular. Tu único trabajo es configurarlas una vez.</p>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px">
-              <div style="border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:12px 14px;background:rgba(255,255,255,.015)"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#f6b04e">01</span><p data-i18n="cw_s1" style="margin:6px 0 0;font-size:12.5px;line-height:1.55;color:#9aa1ad">Copia el prompt de abajo.</p></div>
-              <div style="border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:12px 14px;background:rgba(255,255,255,.015)"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#f6b04e">02</span><p data-i18n="cw_s2" style="margin:6px 0 0;font-size:12.5px;line-height:1.55;color:#9aa1ad">Pégalo en un chat nuevo de Claude y confirma las tareas que te proponga.</p></div>
-              <div style="border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:12px 14px;background:rgba(255,255,255,.015)"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#f6b04e">03</span><p data-i18n="cw_s3" style="margin:6px 0 0;font-size:12.5px;line-height:1.55;color:#9aa1ad">Revisa la sección «Scheduled»: ahí las pausas o borras los días que no trabajes.</p></div>
+            <div style="display:grid;gap:7px">
+              <div style="display:flex;gap:10px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#f6b04e;flex:none">01</span><p data-i18n="cw_s1" style="margin:0;font-size:12.5px;line-height:1.55;color:#9aa1ad">Copia el prompt de abajo.</p></div>
+              <div style="display:flex;gap:10px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#f6b04e;flex:none">02</span><p data-i18n="cw_s2" style="margin:0;font-size:12.5px;line-height:1.55;color:#9aa1ad">Pégalo en un chat nuevo de Claude y confirma las tareas que te proponga.</p></div>
+              <div style="display:flex;gap:10px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#f6b04e;flex:none">03</span><p data-i18n="cw_s3" style="margin:0;font-size:12.5px;line-height:1.55;color:#9aa1ad">Revisa la sección «Scheduled»: ahí las pausas o borras los días que no trabajes.</p></div>
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:4px;background:#0e1015;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:4px;max-width:460px">
               <button type="button" data-v="min" aria-pressed="{{ brPr.min }}" onClick="{{ setBriefing }}" style="font-family:inherit;border:none;border-radius:9px;padding:8px;cursor:pointer;display:grid;gap:1px;font-weight:600;font-size:12.5px;transition:background .25s,color .25s;background:{{ brBg.min }};color:{{ brInk.min }}"><span data-i18n="cw_min">Abridor mínimo</span><span data-i18n="cw_min_s" style="font-weight:400;font-size:10.5px;opacity:.75">casi no consume</span></button>
@@ -318,10 +325,9 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
             <div><button type="button" onClick="{{ copiarPrompt }}" style="font-family:inherit;font-weight:600;font-size:14.5px;cursor:pointer;padding:12px 20px;border-radius:11px;border:none;background:linear-gradient(180deg,#ffcf78,#f0a13a);color:#181207;box-shadow:0 8px 24px rgba(240,161,58,.22)" style-hover="filter:brightness(1.08)">{{ btnPrompt }}</button></div>
             <p data-i18n="cw_warn" style="margin:0;font-size:12px;color:#6b7280">Honestidad: cada ejecución consume de tu mismo límite (por eso el abridor es mínimo). Cowork está en beta y llega gradualmente — si aún no aparece en tu Claude, usa el modo manual.</p>
           </div>
-        </div>
 
         <div style="display:flex;flex-wrap:wrap;gap:10px">
-          <button type="button" onClick="{{ descargarICS }}" style="font-family:inherit;font-weight:600;font-size:14.5px;cursor:pointer;padding:12px 20px;border-radius:11px;border:none;background:linear-gradient(180deg,#ffcf78,#f0a13a);color:#181207;box-shadow:0 8px 24px rgba(240,161,58,.22)" style-hover="filter:brightness(1.08)">{{ btnIcs }}</button>
+          <button type="button" onClick="{{ descargarICS }}" style="font-family:inherit;font-weight:600;font-size:14.5px;cursor:pointer;padding:12px 20px;border-radius:11px;border:{{ icsBd }};background:{{ icsBg }};color:{{ icsInk }};box-shadow:{{ icsShadow }}" style-hover="filter:brightness(1.08)">{{ btnIcs }}</button>
           <button type="button" onClick="{{ copiarMsg }}" style="display:{{ showManualMsg }};font-family:inherit;font-weight:600;font-size:14.5px;cursor:pointer;padding:12px 20px;border-radius:11px;background:transparent;color:#e8ecf3;border:1px solid rgba(255,255,255,.16)" style-hover="border-color:#f6b04e;color:#f6b04e">{{ btnCopy }}</button>
           <button type="button" onClick="{{ compartir }}" style="font-family:inherit;font-weight:600;font-size:14.5px;cursor:pointer;padding:12px 20px;border-radius:11px;background:transparent;color:#e8ecf3;border:1px solid rgba(255,255,255,.16)" style-hover="border-color:#f6b04e;color:#f6b04e">{{ btnShare }}</button>
           <button type="button" onClick="{{ exportarPNG }}" data-i18n="btn_png" style="font-family:inherit;font-weight:600;font-size:13.5px;cursor:pointer;padding:12px 18px;border-radius:11px;background:transparent;color:#9aa1ad;border:1px dashed rgba(255,255,255,.18)" style-hover="border-color:#f6b04e;color:#f6b04e">Descargar como imagen</button>
@@ -331,8 +337,8 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
   </div>
 </section>
 
-<section data-screen-label="Ventana en vivo" style="max-width:1160px;margin:0 auto;padding:clamp(36px,6vw,60px) 24px 0">
-  <div style="background:linear-gradient(180deg,#13161d,#101218);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:clamp(20px,3.5vw,32px)">
+<section data-screen-label="Ventana en vivo" style="display:flex;flex-wrap:wrap;gap:22px;align-items:stretch;max-width:1160px;margin:0 auto;padding:clamp(36px,6vw,60px) 24px 0">
+  <div style="flex:1.2 1 520px;min-width:0;background:linear-gradient(180deg,#13161d,#101218);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:clamp(20px,3.5vw,32px)">
     <p data-i18n="vivo_eyebrow" style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f6b04e">En vivo</p>
     <h2 data-i18n="vivo_t" style="margin:10px 0 0;font-size:clamp(22px,3vw,28px);font-weight:700;letter-spacing:-0.02em">Tu ventana, en tiempo real</h2>
 
@@ -388,10 +394,8 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
       </div>
     </div>
   </div>
-</section>
 
-<section data-screen-label="Ritmo semanal" style="display:{{ ritmoSecDisp }};max-width:1160px;margin:0 auto;padding:clamp(36px,6vw,60px) 24px 0">
-  <div style="background:#12141a;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:clamp(20px,3.5vw,32px)">
+  <div style="display:{{ ritmoSecDisp }};flex:1 1 420px;min-width:0;background:#12141a;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:clamp(20px,3.5vw,32px)">
     <p data-i18n="ritmo_eyebrow" style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f6b04e">El otro límite</p>
     <h2 data-i18n="ritmo_t" style="margin:10px 0 0;font-size:clamp(22px,3vw,28px);font-weight:700;letter-spacing:-0.02em">Tu ritmo semanal</h2>
     <p data-i18n="ritmo_hint" style="margin:10px 0 0;max-width:66ch;font-size:14px;line-height:1.6;color:#9aa1ad">Además de las ventanas de 5 h, tu plan tiene un límite semanal. Escribe cuánto llevas usado (lo ves con /status en Claude) y te digo si puedes acelerar.</p>
@@ -528,6 +532,8 @@ es: {
   h_dias_hint:"Toca para activar o quitar los días en que sonarán tus alarmas.",
   h_pct_hint:"Solo el número: escribe /status en Claude y copia el porcentaje semanal.",
   h_reset_hint:"También sale en /status: cuándo tu límite semanal vuelve a cero.",
+  st1:"01 · Configura tu jornada", st2:"02 · Tu cronograma", st3:"03 · Actívalo",
+  adv_open:"⚙ Ajustes avanzados", adv_close:"− Ocultar ajustes avanzados",
   ent_l:"Cómo activar tus alarmas",
   ent_cw:"Automático con Cowork", ent_cw_s:"Claude abre la ventana por ti",
   ent_man:"Manual con calendario", ent_man_s:"alarmas .ics + mensaje tuyo",
@@ -633,6 +639,8 @@ en: {
   h_dias_hint:"Tap to toggle the days your alarms will ring.",
   h_pct_hint:"Just the number: type /status in Claude and copy the weekly percentage.",
   h_reset_hint:"Also in /status: when your weekly limit goes back to zero.",
+  st1:"01 · Set up your day", st2:"02 · Your schedule", st3:"03 · Turn it on",
+  adv_open:"⚙ Advanced settings", adv_close:"− Hide advanced settings",
   ent_l:"How to activate your alarms",
   ent_cw:"Automatic with Cowork", ent_cw_s:"Claude opens the window for you",
   ent_man:"Manual with calendar", ent_man_s:".ics alarms + your own message",
@@ -671,7 +679,7 @@ class Component extends DCLogic {
     inicio:"09:00", fin:"14:00", bloque2on:false, inicio2:"16:00", fin2:"19:00",
     pausaOn:false, pausaIni:"13:00", pausaFin:"14:00", despertar:"07:00", dormir:"23:00",
     pctUsado:"", diaReset:"1", horaReset:"00:00",
-    entrega:"cowork", briefing:false, promptCopied:false,
+    entrega:"cowork", briefing:false, promptCopied:false, advOpen:false,
     vivoOpen:null, hist:[], now:Date.now(), copied:false, shared:false,
   };
 
@@ -832,6 +840,7 @@ class Component extends DCLogic {
   toggleB2 = () => this.setState(st => ({ bloque2on: !st.bloque2on }));
   togglePausa = () => this.setState(st => ({ pausaOn: !st.pausaOn }));
   onPct = e => this.setState({ pctUsado: e.currentTarget.value });
+  toggleAdv = () => this.setState(st => ({ advOpen: !st.advOpen }));
   setEntrega = e => this.setState({ entrega: e.currentTarget.dataset.v });
   setBriefing = e => this.setState({ briefing: e.currentTarget.dataset.v === "brief" });
   copiarPrompt = () => {
@@ -1114,10 +1123,14 @@ class Component extends DCLogic {
       dBg, dInk, dBd, dPr, toggleDia: this.toggleDia,
       showHorario: s.modo !== "loop" ? "grid" : "none",
       showLoop: s.modo !== "horario" ? "grid" : "none",
-      showB2zone: s.modo === "horario" ? "block" : "none",
+      showB2zone: s.advOpen && s.modo === "horario" ? "block" : "none",
       showB2: s.bloque2on ? "grid" : "none",
       showPausa: s.pausaOn ? "grid" : "none",
-      showInt: s.modo !== "loop" ? "grid" : "none",
+      showInt: s.advOpen && s.modo !== "loop" ? "grid" : "none",
+      advDisp: s.advOpen ? "grid" : "none",
+      advDispB: s.advOpen ? "block" : "none",
+      advLabel: T[s.advOpen ? "adv_close" : "adv_open"],
+      toggleAdv: this.toggleAdv,
       b2Label: T[s.bloque2on ? "b2_rm" : "b2_add"],
       pausaLabel: T[s.pausaOn ? "pausa_rm" : "pausa_add"],
       toggleB2: this.toggleB2, togglePausa: this.togglePausa, onTime: this.onTime,
@@ -1142,6 +1155,10 @@ class Component extends DCLogic {
       btnPrompt: s.promptCopied ? T.btn_prompt_ok : T.btn_prompt,
       copiarPrompt: this.copiarPrompt,
       btnIcs: T[s.entrega === "cowork" ? "btn_ics_rec" : "btn_ics"],
+      icsBg: s.entrega === "cowork" ? "transparent" : "linear-gradient(180deg,#ffcf78,#f0a13a)",
+      icsInk: s.entrega === "cowork" ? "#e8ecf3" : "#181207",
+      icsBd: s.entrega === "cowork" ? "1px solid rgba(255,255,255,.16)" : "none",
+      icsShadow: s.entrega === "cowork" ? "none" : "0 8px 24px rgba(240,161,58,.22)",
       btnCopy: s.copied ? T.btn_msg_ok : T.btn_msg,
       btnShare: s.shared ? T.btn_share_ok : T.btn_share,
       copiarMsg: this.copiarMsg, compartir: this.compartir, exportarPNG: this.exportarPNG,
