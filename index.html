@@ -28,6 +28,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
 @keyframes ttPing{0%,4%{box-shadow:0 0 0 0 rgba(246,176,78,.55)}14%{box-shadow:0 0 0 14px rgba(246,176,78,0)}15%,100%{box-shadow:0 0 0 0 rgba(246,176,78,0)}}
 @keyframes ttPop{0%,44%{opacity:0;transform:translateY(6px)}50%,92%{opacity:1;transform:none}97%,100%{opacity:0}}
 #ttcar::-webkit-scrollbar{display:none}
+#tthist::-webkit-scrollbar{display:none}
 </style>
 </helmet>
 
@@ -377,8 +378,8 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
         <h3 data-i18n="hist_t" style="margin:0;font-size:15px;font-weight:600">Tu historial de ventanas</h3>
         <span data-i18n="hist_hint" style="font-size:12px;color:#6b7280">Cada celda es una hora de la semana; más brillo = más ventanas abiertas.</span>
       </div>
-      <div style="overflow-x:auto;margin-top:14px">
-        <div style="min-width:560px;display:grid;gap:3px">
+      <div id="tthist" style="overflow-x:auto;margin-top:14px;scrollbar-width:none">
+        <div style="min-width:460px;display:grid;gap:3px">
           <sc-for list="{{ heat }}" as="r" hint-placeholder-count="7">
             <div style="display:grid;grid-template-columns:36px repeat(24,1fr);gap:3px;align-items:center">
               <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6b7280">{{ r.label }}</span>
@@ -523,6 +524,7 @@ es: {
   ritmo_fast:(p,e)=>`Vas rápido: usaste ${p}% y va el ${e}% de la semana. Dosifica lo que falta.`,
   ritmo_slow:(p,e)=>`Te sobra capacidad: llevas ${p}% con el ${e}% de la semana andado. Acelera sin miedo.`,
   ritmo_ok:"Ritmo perfecto: tu consumo va a la par de la semana.",
+  ritmo_empty:"La barra azul ya muestra cuánto va de tu semana. Escribe tu % y te digo si puedes acelerar.",
   err_bloque:"Revisa las horas: el bloque debe terminar después de empezar.",
   err_b2:"Revisa el segundo bloque: debe terminar después de empezar.",
   err_b2_orden:"El segundo bloque debe empezar después de que termine el primero.",
@@ -630,6 +632,7 @@ en: {
   ritmo_fast:(p,e)=>`You're going fast: ${p}% used with ${e}% of the week gone. Pace what's left.`,
   ritmo_slow:(p,e)=>`Capacity to spare: ${p}% used with ${e}% of the week gone. Speed up without fear.`,
   ritmo_ok:"Perfect pace: your usage matches the week.",
+  ritmo_empty:"The blue bar already shows how far your week has gone. Type your % and I'll tell you if you can speed up.",
   err_bloque:"Check the times: the block must end after it starts.",
   err_b2:"Check the second block: it must end after it starts.",
   err_b2_orden:"The second block must start after the first one ends.",
@@ -1102,19 +1105,20 @@ class Component extends DCLogic {
       })),
     }));
 
-    let ritmoOutDisp = "none", rUsadoW = "0%", rEspW = "0%", rUsadoTxt = "", rEspTxt = "", rMsg = "", rMsgColor = "#f6b04e";
+    // el "esperado" se calcula siempre; el "usado" espera el % del usuario
+    const ritmoOutDisp = "grid";
+    const ahoraR = new Date(s.now);
+    const [hR, mR] = s.horaReset.split(":").map(Number);
+    const ult = new Date(ahoraR);
+    ult.setHours(hR, mR, 0, 0);
+    ult.setDate(ult.getDate() - ((ahoraR.getDay() - Number(s.diaReset) + 7) % 7));
+    if (ult > ahoraR) ult.setDate(ult.getDate() - 7);
+    const esperado = Math.min(100, 100 * (ahoraR - ult) / (7 * 86400000));
+    const rEspW = esperado.toFixed(0) + "%", rEspTxt = esperado.toFixed(0) + "%";
+    let rUsadoW = "0%", rUsadoTxt = "—", rMsg = T.ritmo_empty, rMsgColor = "#6b7280";
     const pct = Number(s.pctUsado);
     if (s.pctUsado !== "" && pct >= 0 && pct <= 100) {
-      const ahora = new Date(s.now);
-      const [hR, mR] = s.horaReset.split(":").map(Number);
-      const ult = new Date(ahora);
-      ult.setHours(hR, mR, 0, 0);
-      ult.setDate(ult.getDate() - ((ahora.getDay() - Number(s.diaReset) + 7) % 7));
-      if (ult > ahora) ult.setDate(ult.getDate() - 7);
-      const esperado = Math.min(100, 100 * (ahora - ult) / (7 * 86400000));
-      ritmoOutDisp = "grid";
-      rUsadoW = pct + "%"; rEspW = esperado.toFixed(0) + "%";
-      rUsadoTxt = pct + "%"; rEspTxt = esperado.toFixed(0) + "%";
+      rUsadoW = pct + "%"; rUsadoTxt = pct + "%";
       const delta = pct - esperado;
       if (delta > 12) { rMsg = T.ritmo_fast(pct, esperado.toFixed(0)); rMsgColor = "#ef6a6a"; }
       else if (delta < -12) { rMsg = T.ritmo_slow(pct, esperado.toFixed(0)); rMsgColor = "#7fd4a3"; }
