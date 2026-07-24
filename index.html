@@ -159,6 +159,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
         <label style="display:grid;gap:7px"><span data-i18n="fin_l" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Termino</span>
           <input type="time" data-k="fin" value="{{ vFin }}" onChange="{{ onTime }}" style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0e1015;color:#f4f5f7;width:100%;box-sizing:border-box;color-scheme:dark" style-focus="border-color:#f6b04e;outline:none;box-shadow:0 0 0 3px rgba(246,176,78,.18)">
         </label>
+        <span data-i18n="h_horario" style="grid-column:1/-1;font-size:12px;color:#6b7280">Las horas en que arrancas y cierras tu trabajo fuerte con Claude.</span>
       </div>
 
       <div style="display:{{ showB2zone }}">
@@ -180,6 +181,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
         <label style="display:grid;gap:7px"><span data-i18n="dormir_l" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Me duermo</span>
           <input type="time" data-k="dormir" value="{{ vDormir }}" onChange="{{ onTime }}" style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0e1015;color:#f4f5f7;width:100%;box-sizing:border-box;color-scheme:dark" style-focus="border-color:#f6b04e;outline:none;box-shadow:0 0 0 3px rgba(246,176,78,.18)">
         </label>
+        <span data-i18n="h_loop" style="grid-column:1/-1;font-size:12px;color:#6b7280">Antes de despertar y después de dormir no suena ninguna alarma.</span>
       </div>
 
       <div>
@@ -191,6 +193,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
           <label style="display:grid;gap:7px"><span data-i18n="pausa_fin" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Hasta</span>
             <input type="time" data-k="pausaFin" value="{{ vPausaFin }}" onChange="{{ onTime }}" style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0e1015;color:#f4f5f7;width:100%;box-sizing:border-box;color-scheme:dark" style-focus="border-color:#f6b04e;outline:none;box-shadow:0 0 0 3px rgba(246,176,78,.18)">
           </label>
+          <span data-i18n="h_pausa_hint" style="grid-column:1/-1;font-size:12px;color:#6b7280">Tu almuerzo o descanso: las alarmas se saltan esta franja.</span>
         </div>
       </div>
 
@@ -204,6 +207,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
 
       <div style="display:grid;gap:9px">
         <span data-i18n="dias_l" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Días con alarmas</span>
+        <span data-i18n="h_dias_hint" style="font-size:12px;color:#6b7280;margin-top:-2px">Toca para activar o quitar los días en que sonarán tus alarmas.</span>
         <div style="display:flex;flex-wrap:wrap;gap:7px">
           <button type="button" data-dia="MO" aria-pressed="{{ dPr.MO }}" onClick="{{ toggleDia }}" data-i18n="d_mo" style="font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;padding:7px 13px;border-radius:999px;transition:all .2s;border:1px solid {{ dBd.MO }};background:{{ dBg.MO }};color:{{ dInk.MO }}">Lun</button>
           <button type="button" data-dia="TU" aria-pressed="{{ dPr.TU }}" onClick="{{ toggleDia }}" data-i18n="d_tu" style="font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;padding:7px 13px;border-radius:999px;transition:all .2s;border:1px solid {{ dBd.TU }};background:{{ dBg.TU }};color:{{ dInk.TU }}">Mar</button>
@@ -371,6 +375,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:20px">
       <label style="display:grid;gap:7px"><span data-i18n="pct_l" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Límite semanal usado (%)</span>
         <input type="number" min="0" max="100" placeholder="45" data-i18n-ph="pct_ph" value="{{ vPct }}" onInput="{{ onPct }}" style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0e1015;color:#f4f5f7;width:100%;box-sizing:border-box;color-scheme:dark" style-focus="border-color:#f6b04e;outline:none;box-shadow:0 0 0 3px rgba(246,176,78,.18)">
+        <span data-i18n="h_pct_hint" style="font-size:12px;color:#6b7280">Solo el número: escribe /status en Claude y copia el porcentaje semanal.</span>
       </label>
       <label style="display:grid;gap:7px"><span data-i18n="reset_l" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a919e">Cuándo se reinicia</span>
         <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
@@ -385,6 +390,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
           </select>
           <input type="time" value="{{ vHoraReset }}" onChange="{{ onHoraReset }}" style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0e1015;color:#f4f5f7;color-scheme:dark" style-focus="border-color:#f6b04e;outline:none">
         </div>
+        <span data-i18n="h_reset_hint" style="font-size:12px;color:#6b7280">También sale en /status: cuándo tu límite semanal vuelve a cero.</span>
       </label>
     </div>
 
@@ -492,6 +498,12 @@ es: {
   err_pausa:"Revisa la pausa: debe terminar después de empezar.",
   err_fuera:"Tu bloque queda fuera de tus horas despierto: revisa las horas.",
   err_dias:"Elige al menos un día para tus alarmas.",
+  h_horario:"Las horas en que arrancas y cierras tu trabajo fuerte con Claude.",
+  h_loop:"Antes de despertar y después de dormir no suena ninguna alarma.",
+  h_pausa_hint:"Tu almuerzo o descanso: las alarmas se saltan esta franja.",
+  h_dias_hint:"Toca para activar o quitar los días en que sonarán tus alarmas.",
+  h_pct_hint:"Solo el número: escribe /status en Claude y copia el porcentaje semanal.",
+  h_reset_hint:"También sale en /status: cuándo tu límite semanal vuelve a cero.",
   png_title:"Mi cronograma", png_brand:"TokenTiming",
   foot_1:"TokenTiming — herramienta independiente, no afiliada a Anthropic.",
   foot_2:"Los límites reales pueden variar según carga y modelo. La alarma no manda el mensaje por ti: ese primer clic es tuyo.",
@@ -565,6 +577,12 @@ en: {
   err_pausa:"Check the break: it must end after it starts.",
   err_fuera:"Your block falls outside your waking hours: check the times.",
   err_dias:"Pick at least one day for your alarms.",
+  h_horario:"The times you start and wrap up your deep work with Claude.",
+  h_loop:"No alarm rings before you wake up or after you go to sleep.",
+  h_pausa_hint:"Your lunch or rest: alarms skip this stretch.",
+  h_dias_hint:"Tap to toggle the days your alarms will ring.",
+  h_pct_hint:"Just the number: type /status in Claude and copy the weekly percentage.",
+  h_reset_hint:"Also in /status: when your weekly limit goes back to zero.",
   png_title:"My schedule", png_brand:"TokenTiming",
   foot_1:"TokenTiming — an independent tool, not affiliated with Anthropic.",
   foot_2:"Real limits can vary with load and model. The alarm can't send the message for you: that first click is yours.",
