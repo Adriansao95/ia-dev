@@ -332,7 +332,7 @@ a{color:#4f9cf0;text-decoration:none}a:hover{color:#8fbdf5}
               <button type="button" onClick="{{ abrirClaude }}" style="font-family:inherit;font-weight:600;font-size:14.5px;cursor:pointer;padding:12px 20px;border-radius:11px;border:none;background:linear-gradient(180deg,#ffcf78,#f0a13a);color:#181207;box-shadow:0 8px 24px rgba(240,161,58,.22)" style-hover="filter:brightness(1.08)">🚀 <span data-i18n="btn_open">Abrir Cowork con el prompt copiado</span></button>
               <button type="button" onClick="{{ copiarPrompt }}" style="font-family:inherit;font-weight:600;font-size:13.5px;cursor:pointer;padding:12px 18px;border-radius:11px;background:transparent;color:#e8ecf3;border:1px solid rgba(255,255,255,.16)" style-hover="border-color:#f6b04e;color:#f6b04e">{{ btnPrompt }}</button>
             </div>
-            <p data-i18n="cw_open_note" style="margin:0;font-size:12px;color:#6b7280">Ojo: el chat normal de Claude no crea tareas programadas — eso vive en Cowork. Te abro Cowork con el prompt ya copiado: pégalo ahí, o entra a «Scheduled» → «New task».</p>
+            <p data-i18n="cw_open_note" style="margin:0;font-size:12px;color:#6b7280">Ojo: el chat normal de Claude no crea tareas programadas. Te abro directo la sección «Scheduled» con el prompt ya copiado: dale a «New task» y pégalo.</p>
             <p data-i18n="cw_warn" style="margin:0;font-size:12px;color:#6b7280">Honestidad: cada ejecución consume de tu mismo límite (por eso el abridor es mínimo). Cowork está en beta y llega gradualmente — si aún no aparece en tu Claude, usa el modo manual.</p>
           </div>
 
@@ -555,7 +555,7 @@ es: {
   cw_brief:"Abridor con briefing", cw_brief_s:"despierta con valor, consume más",
   btn_prompt:"Copiar prompt para Cowork", btn_prompt_ok:"✓ Copiado — pégalo en Claude",
   btn_open:"Abrir Cowork con el prompt copiado",
-  cw_open_note:"Ojo: el chat normal de Claude no crea tareas programadas — eso vive en Cowork. Te abro Cowork con el prompt ya copiado: pégalo ahí, o entra a «Scheduled» → «New task».",
+  cw_open_note:"Ojo: el chat normal de Claude no crea tareas programadas. Te abro directo la sección «Scheduled» con el prompt ya copiado: dale a «New task» y pégalo.",
   cw_warn:"Honestidad: cada ejecución consume de tu mismo límite (por eso el abridor es mínimo). Cowork está en beta y llega gradualmente — si aún no aparece en tu Claude, usa el modo manual.",
   btn_ics_rec:"Recordatorios de recarga (.ics)",
   ics_recarga:"Capacidad fresca — lanza lo pesado ahora",
@@ -665,7 +665,7 @@ en: {
   cw_brief:"Briefing opener", cw_brief_s:"wake up with value, costs more",
   btn_prompt:"Copy the Cowork prompt", btn_prompt_ok:"✓ Copied — paste it in Claude",
   btn_open:"Open Cowork with the prompt copied",
-  cw_open_note:"Heads up: Claude's regular chat can't create scheduled tasks — that lives in Cowork. I'll open Cowork with the prompt already copied: paste it there, or go to “Scheduled” → “New task”.",
+  cw_open_note:"Heads up: Claude's regular chat can't create scheduled tasks. I'll open the “Scheduled” section directly with the prompt already copied: hit “New task” and paste it.",
   cw_warn:"Honesty: every run draws from your same limit (that's why the opener is minimal). Cowork is in beta and rolling out gradually — if it's not in your Claude yet, use manual mode.",
   btn_ics_rec:"Recharge reminders (.ics)",
   ics_recarga:"Fresh capacity — launch the heavy stuff now",
@@ -874,8 +874,8 @@ class Component extends DCLogic {
     const p = this._cwPrompt || "";
     if (!p) return;
     if (navigator.clipboard) navigator.clipboard.writeText(p).catch(() => {});
-    // las tareas programadas viven en Cowork, no en el chat normal
-    window.open("https://claude.ai/cowork", "_blank", "noopener");
+    // las tareas programadas viven en la sección Scheduled, no en el chat normal
+    window.open("https://claude.ai/scheduled-task", "_blank", "noopener");
   };
   onDiaReset = e => this.setState({ diaReset: e.currentTarget.value });
   onHoraReset = e => this.setState({ horaReset: e.currentTarget.value });
